@@ -6,6 +6,7 @@ import { initDatabase } from "./db/queries";
 import { initializeMiddlewares } from "./middlewares";
 import { initializeRoutes } from "./routes";
 import MessageService from "./services/message-service";
+import { SafeUser } from "./types/user";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,7 +22,9 @@ initializeRoutes(app);
 
 app.get("/", async (req, res) => {
   try {
-    const messages = await MessageService.getMessages();
+    const isMember = (req.user as SafeUser)?.isMember || false;
+    const messages = await MessageService.getMessages(isMember);
+
     res.render("index", {
       user: req.user,
       messages: messages,

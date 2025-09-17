@@ -2,19 +2,27 @@ import pool from "../db/pool";
 import type { Message, MessageCreate } from "../types/message";
 
 class MessageService {
-  async getMessages(): Promise<Message[]> {
+  async getMessages(isMember: boolean): Promise<Message[]> {
     const messages = await pool.query(`
       SELECT 
         m.id, 
         m.title, 
         m.content, 
         m.created_at as "createdAt",
-        u.username as author
+        u.username,
+        u.first_name,
+        u.last_name
       FROM messages m 
       JOIN users u ON m.user_id = u.id 
       ORDER BY m.created_at DESC
     `);
-    return messages.rows;
+
+    return messages.rows.map((row) => ({
+      ...row,
+      author: isMember
+        ? `${row.first_name} ${row.last_name} (${row.username})`
+        : "******** (********)",
+    }));
   }
 
   async createMessage(message: MessageCreate): Promise<Message> {

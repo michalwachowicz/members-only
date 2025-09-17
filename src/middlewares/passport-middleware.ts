@@ -26,7 +26,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  const user = await UserService.getUserById(id as number);
+  const user = await UserService.getSafeUserById(id as number);
   done(null, user);
 });
 

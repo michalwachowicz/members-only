@@ -1,18 +1,50 @@
 import bcrypt from "bcrypt";
 import pool from "../db/pool";
-import type { User, UserRegister } from "../types/user";
+import type { User, UserRegister, SafeUser } from "../types/user";
+
+interface DbUserRow {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  password: string;
+  is_member: boolean;
+  is_admin: boolean;
+  created_at: Date;
+}
 
 class UserService {
+  private adaptDbRowToUser(dbRow: DbUserRow): User {
+    return {
+      id: dbRow.id,
+      username: dbRow.username,
+      firstName: dbRow.first_name,
+      lastName: dbRow.last_name,
+      password: dbRow.password,
+      isMember: dbRow.is_member,
+      isAdmin: dbRow.is_admin,
+      createdAt: dbRow.created_at,
+    };
+  }
+
   async getUserByUsername(username: string): Promise<User | null> {
     const result = await pool.query("SELECT * FROM users WHERE username = $1", [
       username,
     ]);
-    return result.rows[0] || null;
+    const dbRow = result.rows[0] as DbUserRow | undefined;
+    return dbRow ? this.adaptDbRowToUser(dbRow) : null;
   }
 
-  async getUserById(id: number): Promise<User | null> {
+  async getSafeUserById(id: number): Promise<SafeUser | null> {
     const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-    return result.rows[0] || null;
+    const dbRow = result.rows[0] as DbUserRow | undefined;
+
+    if (!dbRow) return null;
+
+    const user = this.adaptDbRowToUser(dbRow);
+    const { password, ...safeUser } = user;
+
+    return safeUser;
   }
 
   async createUser(user: UserRegister): Promise<User> {
@@ -25,7 +57,8 @@ class UserService {
       "INSERT INTO users (username, password, first_name, last_name, is_member, is_admin) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [username, hashedPassword, firstName, lastName, false, false]
     );
-    return result.rows[0];
+    const dbRow = result.rows[0] as DbUserRow;
+    return this.adaptDbRowToUser(dbRow);
   }
 }
 
