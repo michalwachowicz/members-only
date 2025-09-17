@@ -1,4 +1,5 @@
 import "dotenv/config";
+import path from "path";
 import express from "express";
 import { LOGGER } from "./utils/logger";
 import { initDatabase } from "./db/queries";
@@ -11,8 +12,15 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 initializeMiddlewares(app);
 initializeRoutes(app);
+
+app.get("/", (_, res) => {
+  res.render("index");
+});
 
 app.listen(PORT, async () => {
   LOGGER.info(`Server is running on http://localhost:${PORT}`);
