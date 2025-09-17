@@ -3,17 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Members Only</title>
+    <title>Members Only - Register</title>
   </head>
   <body>
     <h1>Register</h1>
 
+    <!-- Success message -->
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div style="color: green; margin-bottom: 20px">
+      <p><%= message %></p>
+      <% if (typeof user !== 'undefined') { %>
+      <p>Welcome, <%= user.firstName %> <%= user.lastName %>!</p>
+      <% } %>
+    </div>
+    <% } %>
+
+    <!-- Error messages -->
+    <% if (typeof error !== 'undefined') { %>
+    <div style="color: red; margin-bottom: 20px">
+      <p><%= error %></p>
+    </div>
+    <% } %>
+
+    <!-- Validation errors -->
+    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+    <div style="color: red; margin-bottom: 20px">
+      <p><strong>Please fix the following errors:</strong></p>
+      <ul style="margin: 10px 0; padding-left: 20px">
+        <% errors.forEach(function(error) { %>
+        <li><%= error %></li>
+        <% }); %>
+      </ul>
+    </div>
+    <% } %>
+
     <form action="/auth/register" method="post">
-      <input type="text" name="username" placeholder="Username" />
-      <input type="text" name="firstName" placeholder="First Name" />
-      <input type="text" name="lastName" placeholder="Last Name" />
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        value="<%= typeof formData !== 'undefined' && formData.username ? formData.username : '' %>"
+      />
+      <input
+        type="text"
+        name="firstName"
+        placeholder="First Name"
+        value="<%= typeof formData !== 'undefined' && formData.firstName ? formData.firstName : '' %>"
+      />
+      <input
+        type="text"
+        name="lastName"
+        placeholder="Last Name"
+        value="<%= typeof formData !== 'undefined' && formData.lastName ? formData.lastName : '' %>"
+      />
       <input type="password" name="password" placeholder="Password" />
       <button type="submit">Register</button>
     </form>
+
+    <p>Already have an account? <a href="/auth/login">Login here</a></p>
   </body>
 </html>
