@@ -3,9 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Members Only</title>
   </head>
   <body>
-    <h1>Hello World</h1>
+    <h1>Members Only</h1>
+
+    <div class="auth-links">
+      <% if (isAuthenticated) { %>
+      <a href="/auth/logout">Logout</a>
+      <% } else { %>
+      <a href="/auth/login">Login</a>
+      <a href="/auth/register">Register</a>
+      <% } %>
+    </div>
+
+    <h2>Messages</h2>
+    <% if (messages && messages.length > 0) { %> <% messages.forEach(message =>
+    { %>
+    <div class="message">
+      <div class="message-title"><%= message.title %></div>
+      <div class="message-content"><%= message.content %></div>
+      <div class="message-meta">
+        Posted on: <%= new Date(message.createdAt).toLocaleString() %> <% if
+        (isAuthenticated && user.isMember) { %> | Author: <%= message.author %>
+        <% } %>
+      </div>
+    </div>
+    <% }); %> <% } else { %>
+    <p>No messages available.</p>
+    <% } %>
   </body>
 </html>

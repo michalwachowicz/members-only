@@ -1,4 +1,4 @@
-interface Message {
+export interface Message {
   id: number;
   userId: number;
   title: string;
@@ -6,4 +6,4 @@ interface Message {
   createdAt: Date;
 }
 
-export default Message;
+export type MessageCreate = Omit<Message, "id" | "createdAt">;
