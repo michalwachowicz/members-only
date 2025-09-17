@@ -1,4 +1,4 @@
-interface User {
+export interface User {
   id: number;
   username: string;
   firstName: string;
@@ -9,4 +9,8 @@ interface User {
   createdAt: Date;
 }
 
-export default User;
+export type UserRegister = Omit<
+  User,
+  "id" | "createdAt" | "isMember" | "isAdmin"
+>;
+export type SafeUser = Omit<User, "password">;

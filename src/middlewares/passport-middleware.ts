@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import passport from "passport";
-import User from "../types/user";
+import type { User } from "../types/user";
 import { Express } from "express";
 import { Strategy as LocalStrategy } from "passport-local";
 import { UserService } from "../services";
