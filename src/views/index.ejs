@@ -25,7 +25,7 @@
       <div class="message-content"><%= message.content %></div>
       <div class="message-meta">
         Posted on: <%= new Date(message.createdAt).toLocaleString() %> <% if
-        (isAuthenticated && user.isMember) { %> | Author: <%= message.author %>
+        (isAuthenticated && user.is_member) { %> | Author: <%= message.author %>
         <% } %>
       </div>
     </div>

@@ -14,6 +14,16 @@ class AuthController {
       res.status(400).json({ message: (error as Error).message });
     }
   }
+
+  async getLogin(req: Request, res: Response) {
+    if (req.isAuthenticated()) return res.redirect("/");
+    res.render("login");
+  }
+
+  async getRegister(req: Request, res: Response) {
+    if (req.isAuthenticated()) return res.redirect("/");
+    res.render("register");
+  }
 }
 
 export default new AuthController();
