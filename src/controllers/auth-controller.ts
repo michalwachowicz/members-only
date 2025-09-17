@@ -24,6 +24,13 @@ class AuthController {
     if (req.isAuthenticated()) return res.redirect("/");
     res.render("register");
   }
+
+  async logout(req: Request, res: Response) {
+    req.logout((err) => {
+      if (err) return res.status(500).json({ message: (err as Error).message });
+      res.redirect("/");
+    });
+  }
 }
 
 export default new AuthController();
