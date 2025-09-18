@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members Only - <%= user.username %></title>
+</head>
+<body>
+  <h1><%= user.username %></h1>
+
+  <p>Full Name: <%= user.firstName %> <%= user.lastName %></p>
+
+  <h2>Messages</h2>
+  
+  <% if (messages && messages.length > 0) { %>
+    <% messages.forEach((message) => { %>
+      <div class="message">
+        <div class="message-title"><%= message.title %></div>
+        <div class="message-content"><%= message.content %></div>
+        <div class="message-meta">
+          Posted on:
+          <%= new Date(message.createdAt).toLocaleString() %>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <p>No messages available.</p>
+  <% } %>
+</body>
+</html>
