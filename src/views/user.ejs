@@ -20,7 +20,7 @@
       <span>Date Joined:</span> <%= new Date(user.createdAt).toLocaleString() %>
     </div>
 
-    <%- include("partials/messages", { showMeta: false, className: "messages--user" }) %>
+    <%- include("partials/messages", { showAuthor: false, className: "messages--user" }) %>
   </main>
 </body>
 </html>

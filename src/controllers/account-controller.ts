@@ -10,7 +10,11 @@ class AccountController {
     const account = await UserService.getSafeUserById(user.id);
     const messages = await MessageService.getMessagesByUserId(user.id);
 
-    res.render("account", { account, messages });
+    res.render("account", {
+      account,
+      messages,
+      isAuthenticated: req.isAuthenticated(),
+    });
   }
 
   async updateAccount(req: Request, res: Response) {

@@ -3,36 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Members Only - Account</title>
+  <title>Account | membersonly</title>
+  <%- include("partials/styles") %>
 </head>
 <body>
-  <h1>Account</h1>
+  <%- include("partials/header", { user: account }) %>
 
-  <p>Username: <%= account.username %></p>
-  <p>Full Name: <%= account.firstName %> <%= account.lastName %></p>
+  <main class="main">
+    <h1 class="main__title">Account</h1>
 
-  <% if (!account.isMember) { %>
-    <p>You are not a member. Please upgrade to a member to unlock all features.</p>
-    <a href="/auth/upgrade">Upgrade</a>
-  <% } %>
+    <div class="user__info">
+      <span>Username:</span> <%= account.username %>
+    </div>
 
-  <a href="/settings">Settings</a>
+    <div class="user__info">
+      <span>Full Name:</span> <%= account.firstName %> <%= account.lastName %>
+    </div>
 
-  <h2>Messages</h2>
-  
-  <% if (messages && messages.length > 0) { %>
-    <% messages.forEach((message) => { %>
-      <div class="message">
-        <div class="message-title"><%= message.title %></div>
-        <div class="message-content"><%= message.content %></div>
-        <div class="message-meta">
-          Posted on:
-          <%= new Date(message.createdAt).toLocaleString() %>
-        </div>
+    <div class="user__info">
+      <span>Membership Status:</span> <%= account.isAdmin ? "Admin" : account.isMember ? "Member" : "Not Member" %>
+    </div>
+
+    <div class="user__info">
+      <span>Date Joined:</span> <%= new Date(account.createdAt).toLocaleString() %>
+    </div>
+
+    <% if (!account.isMember) { %>
+      <div class="acccount-not-member">
+        You are not a member. Please upgrade to a member to unlock all features.
       </div>
-    <% }) %>
-  <% } else { %>
-    <p>No messages available.</p>
-  <% } %>
+      <a class="btn" href="/auth/upgrade">Upgrade</a>
+    <% } %>
+
+    <a class="btn btn--settings" href="/settings">Account Settings</a>
+
+    <%- include("partials/messages", { showAuthor: false, className: "messages--user", user: account }) %>
+  </main>
 </body>
 </html>

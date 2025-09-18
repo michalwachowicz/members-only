@@ -16,6 +16,11 @@ class UserController {
       return;
     }
 
+    if (id === (req.user as SafeUser).id.toString()) {
+      res.redirect("/account");
+      return;
+    }
+
     const user = await UserService.getSafeUserById(Number(id));
     if (!user) {
       res.render("error", {

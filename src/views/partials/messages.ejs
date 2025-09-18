@@ -2,14 +2,16 @@
   <% if (messages && messages.length > 0) { %>
     <% messages.forEach((message) => { %>
       <div class="message">
-        <% if (showMeta) { %>
-          <div class="message__meta">
+        <div class="message__meta">
+          <% if (showAuthor) { %>
             <img
               src="/assets/images/user.svg"
               alt="User profile picture"
               class="message__profile-pic"
             />
-            <div class="message__meta-text">
+          <% } %>
+          <div class="message__meta-text">
+            <% if (showAuthor) { %>
               <% if (user?.isMember) { %>
                 <a class="message__meta-text-author" href="/users/<%= message.userId %>">
                   <%= message.author %>
@@ -20,12 +22,12 @@
                 </span>
               <% } %>
               <span class="message__meta-text-separator">&#183;</span>
-              <span class="message__meta-text-date <%= user?.isMember ? '' : 'text-muted' %>">
-                <%= user?.isMember ? new Date(message.createdAt).toLocaleString() : '*********' %>
-              </span>
-            </div>
+            <% } %>
+            <span class="message__meta-text-date <%= user?.isMember ? '' : 'text-muted' %>">
+              <%= user?.isMember ? new Date(message.createdAt).toLocaleString() : '*********' %>
+            </span>
           </div>
-        <% } %>
+        </div>
         <div class="message__title"><%= message.title %></div>
         <div class="message__content"><%= message.content %></div>
       </div>
