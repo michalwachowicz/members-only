@@ -1,0 +1,126 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, #111112 0%, #181819 100%);
+  min-height: 100vh;
+  color: #e0e2e4;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #111112;
+  border-bottom: 1px solid #232324;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 2px #000, 0 0 8px #222;
+}
+
+.logo__highlight {
+  color: #ff5e5b;
+}
+
+.main {
+  padding: 4rem 1.5rem;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.messages {
+  box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.2);
+  border-radius: 1rem;
+  border: 1px solid #232324;
+  background-color: #181819;
+}
+
+.messages > .message {
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid #232324;
+}
+
+.messages > .message:hover {
+  background-color: #232324;
+}
+
+.messages > .message:first-child {
+  border-radius: 1rem 1rem 0 0;
+}
+
+.messages > .message:last-child {
+  border-bottom: none;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.message__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.message__meta-text {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 1rem;
+  transform: scale(0.75);
+  transform-origin: left;
+}
+
+.message__profile-pic {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+}
+
+.message__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  color: #fff;
+}
+
+.message__content {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.text-muted {
+  position: relative;
+}
+
+.text-muted {
+  position: relative;
+  pointer-events: none;
+}
+
+.text-muted::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  background: rgba(35, 35, 36, 0.9);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+  border-radius: 0.25rem;
+}

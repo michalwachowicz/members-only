@@ -4,56 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Members Only</title>
+    <%- include("partials/styles") %>
   </head>
   <body>
-    <h1>Members Only</h1>
+    <%- include("partials/header") %>
 
-    <div class="auth-links">
-      <% if (isAuthenticated) { %>
-        <a href="/account"><%= user.username %></a>
-        <a href="/auth/logout">Logout</a>
-      <% } else { %>
-        <a href="/auth/login">Login</a>
-        <a href="/auth/register">Register</a>
-      <% } %>
-    </div>
-
-    <h2>Messages</h2>
-
-    <% if (isAuthenticated) { %>
-      <% if (user.isMember) { %>
-        <form action="/messages/create" method="post">
-          <input type="text" name="title" placeholder="Title" />
-          <textarea name="content" placeholder="Content"></textarea>
-          <button type="submit">Create Message</button>
-        </form>
-      <% } else { %>
-        <p>Please upgrade to a member to create messages.</p>
-        <a href="/auth/upgrade">Upgrade</a>
-      <% } %>
-    <% } else { %>
-      <p>Please login to add messages.</p>
-    <% } %>
-
-    <% if (messages && messages.length > 0) { %>
-      <% messages.forEach((message) => { %>
-        <div class="message">
-          <div class="message-title"><%= message.title %></div>
-          <div class="message-content"><%= message.content %></div>
-          <div class="message-meta">
-            Posted on:
-            <%= user?.isMember ? new Date(message.createdAt).toLocaleString() : "********" %>
-            | Author: 
-            <% if (user?.isMember) { %>
-              <a href="/users/<%= message.userId %>"><%= message.author %></a>
-            <% } else { %>
-              <%= message.author %>
-            <% } %>
-          </div>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <p>No messages available.</p>
-    <% } %>
+    <main class="main">
+      <div class="messages">
+        <% if (messages && messages.length > 0) { %>
+          <% messages.forEach((message) => { %>
+            <div class="message">
+              <div class="message__meta">
+                <img
+                  src="/assets/images/user.svg"
+                  alt="User profile picture"
+                  class="message__profile-pic"
+                />
+                <div class="message__meta-text">
+                  <% if (user?.isMember) { %>
+                    <a class="message__meta-text-author" href="/users/<%= message.userId %>">
+                      <%= message.author %>
+                    </a>
+                  <% } else { %>
+                    <span class="message__meta-text-author text-muted">
+                      <%= message.author %>
+                    </span>
+                  <% } %>
+                  <span class="message__meta-text-separator">&#183;</span>
+                  <span class="message__meta-text-date <%= user?.isMember ? '' : 'text-muted' %>">
+                    <%= user?.isMember ? new Date(message.createdAt).toLocaleString() : '*********' %>
+                  </span>
+                </div>
+              </div>
+              <div class="message__title"><%= message.title %></div>
+              <div class="message__content"><%= message.content %></div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p class="messages__empty">No messages available.</p>
+        <% } %>
+      </div>
+    </main>
   </body>
 </html>

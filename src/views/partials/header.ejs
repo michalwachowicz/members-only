@@ -1,0 +1,15 @@
+<header class="header">
+  <h1 class="logo">
+    <a href="/">members<span class="logo__highlight">only</span></a>
+  </h1>
+
+  <div class="auth-links">
+    <% if (isAuthenticated) { %>
+      <a href="/account"><%= user.username %></a>
+      <a href="/auth/logout">Logout</a>
+    <% } else { %>
+      <a href="/auth/login">Login</a>
+      <a href="/auth/register">Register</a>
+    <% } %>
+  </div>
+</header>
