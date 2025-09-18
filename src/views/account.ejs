@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members Only - Account</title>
+</head>
+<body>
+  <h1>Account</h1>
+
+  <p>Username: <%= account.username %></p>
+  <p>Full Name: <%= account.firstName %> <%= account.lastName %></p>
+
+  <% if (!account.isMember) { %>
+    <p>You are not a member. Please upgrade to a member to unlock all features.</p>
+    <a href="/auth/upgrade">Upgrade</a>
+  <% } %>
+
+  <a href="/settings">Settings</a>
+
+  <h2>Messages</h2>
+  
+  <% if (messages && messages.length > 0) { %>
+    <% messages.forEach((message) => { %>
+      <div class="message">
+        <div class="message-title"><%= message.title %></div>
+        <div class="message-content"><%= message.content %></div>
+        <div class="message-meta">
+          Posted on:
+          <%= new Date(message.createdAt).toLocaleString() %>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <p>No messages available.</p>
+  <% } %>
+</body>
+</html>
