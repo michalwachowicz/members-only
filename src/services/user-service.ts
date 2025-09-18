@@ -75,6 +75,16 @@ class UserService {
   async deleteUser(id: number): Promise<void> {
     await pool.query("DELETE FROM users WHERE id = $1", [id]);
   }
+
+  async getSafeUsers(): Promise<SafeUser[]> {
+    const result = await pool.query("SELECT * FROM users");
+    return result.rows
+      .map((row) => this.adaptDbRowToUser(row))
+      .map((user) => {
+        const { password, ...safeUser } = user;
+        return safeUser;
+      });
+  }
 }
 
 export default new UserService();

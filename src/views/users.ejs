@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members Only - Users</title>
+</head>
+<body>
+  <h1>Users</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Membership Status</th>
+        <th>Date Joined</th>
+      </tr>
+      <tbody>
+        <% users.forEach((user) => { %>
+          <tr>
+            <td><a href="/users/<%= user.id %>"><%= user.username %></a></td>
+            <td><%= user.firstName %> <%= user.lastName %></td>
+            <td><%= user.isAdmin ? "Admin" : user.isMember ? "Member" : "Not Member" %></td>
+            <td><%= new Date(user.createdAt).toLocaleString() %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </thead>
+  </table>
+</body>
+</html>

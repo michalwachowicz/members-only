@@ -29,6 +29,14 @@ class UserController {
 
     res.render("user", { user, messages });
   }
+
+  async getUsers(req: Request, res: Response) {
+    if (!req.isAuthenticated()) return res.redirect("/auth/login");
+    if (!(req.user as SafeUser).isMember) return res.redirect("/auth/upgrade");
+
+    const users = await UserService.getSafeUsers();
+    res.render("users", { users });
+  }
 }
 
 export default new UserController();
