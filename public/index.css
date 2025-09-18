@@ -16,6 +16,41 @@ a {
   color: inherit;
 }
 
+label,
+input,
+textarea {
+  display: block;
+  width: 100%;
+}
+
+label {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+input,
+textarea {
+  border: 1px solid #3a3a3c;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: transparent;
+  margin-bottom: 1rem;
+  font-family: inherit;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #ff5e5b;
+}
+
+textarea {
+  height: 10rem;
+  resize: none;
+}
+
 .header {
   position: sticky;
   top: 0;
@@ -41,8 +76,13 @@ a {
 
 .main {
   padding: 4rem 1.5rem;
-  max-width: 768px;
+  max-width: 660px;
   margin: 0 auto;
+}
+
+.main__title {
+  font-size: 1.625rem;
+  margin-bottom: 1.75rem;
 }
 
 .messages {
@@ -124,4 +164,37 @@ a {
   backdrop-filter: blur(3px);
   pointer-events: none;
   border-radius: 0.25rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  border: none;
+  background-color: #ff5e5b;
+  color: #fff;
+  cursor: pointer;
+  transition: scale 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:hover {
+  scale: 1.05;
+}
+
+.form--create-message {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 1rem;
+}
+
+.form-group {
+  width: 100%;
 }

@@ -41,7 +41,10 @@ class MessageController {
     if (!req.isAuthenticated()) return res.redirect("/auth/login");
     if (!(req.user as SafeUser).isMember) return res.redirect("/auth/upgrade");
 
-    res.render("create-message");
+    res.render("create-message", {
+      user: req.user,
+      isAuthenticated: req.isAuthenticated(),
+    });
   }
 }
 
