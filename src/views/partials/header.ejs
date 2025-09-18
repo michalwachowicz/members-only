@@ -5,6 +5,10 @@
 
   <div class="auth-links">
     <% if (isAuthenticated) { %>
+      <% if (user.isMember) { %>
+        <a href="/messages/create">Create Message</a>
+      <% } %>
+
       <a href="/account"><%= user.username %></a>
       <a href="/auth/logout">Logout</a>
     <% } else { %>

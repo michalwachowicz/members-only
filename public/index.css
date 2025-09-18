@@ -25,6 +25,7 @@ a {
   padding: 1rem 1.5rem;
   background-color: #111112;
   border-bottom: 1px solid #232324;
+  z-index: 2;
 }
 
 .logo {

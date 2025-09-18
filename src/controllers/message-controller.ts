@@ -36,6 +36,13 @@ class MessageController {
       });
     }
   }
+
+  async getCreateMessage(req: Request, res: Response) {
+    if (!req.isAuthenticated()) return res.redirect("/auth/login");
+    if (!(req.user as SafeUser).isMember) return res.redirect("/auth/upgrade");
+
+    res.render("create-message");
+  }
 }
 
 export default new MessageController();
