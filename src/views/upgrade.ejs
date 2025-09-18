@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members Only - Upgrade</title>
+</head>
+<body>
+  <h1>Upgrade</h1>
+
+  <form action="/auth/upgrade" method="post">
+    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+      <div style="color: red; margin-bottom: 20px">
+        <p><strong>Please fix the following errors:</strong></p>
+        <ul style="margin: 10px 0; padding-left: 20px">
+          <% errors.forEach(function(error) { %>
+          <li><%= error %></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+    <code>
+      console.log(typeof null);
+    </code>
+    </p>
+    <input type="text" name="answer" placeholder="Your answer">
+    <button type="submit">Upgrade</button>
+  </form>
+</body>
+</html>

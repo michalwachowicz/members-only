@@ -1,28 +1,27 @@
 import { Request, Response } from "express";
-import MessageService from "../services/message-service";
+import { MessageService } from "../services";
 import type { MessageCreate } from "../types/message";
-import type { SafeUser, User } from "../types/user";
+import type { SafeUser } from "../types/user";
 
 class MessageController {
   async createMessage(req: Request, res: Response) {
     try {
       if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: "Authentication required" });
+        res.redirect("/auth/login");
+        return;
       }
 
-      const user = req.user as User;
+      const user = req.user as SafeUser;
       if (!user.isMember) {
-        return res
-          .status(403)
-          .json({ message: "Membership required to create messages" });
+        res.redirect("/auth/upgrade");
+        return;
       }
 
       const { title, content } = req.body;
 
       if (!title || !content) {
-        return res
-          .status(400)
-          .json({ message: "Title and content are required" });
+        res.redirect("/messages/create");
+        return;
       }
 
       const userId = user.id;
@@ -31,23 +30,11 @@ class MessageController {
       await MessageService.createMessage(messageData);
       res.redirect("/");
     } catch (error) {
-      res.status(500).json({ message: (error as Error).message });
+      res.render("error", {
+        title: "Message Creation Error",
+        message: (error as Error).message,
+      });
     }
-  }
-
-  async getCreateMessage(req: Request, res: Response) {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Authentication required" });
-    }
-
-    const user = req.user as SafeUser;
-    if (!user.isMember) {
-      return res
-        .status(403)
-        .json({ message: "Membership required to create messages" });
-    }
-
-    res.render("create-message");
   }
 }
 

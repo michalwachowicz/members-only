@@ -10,26 +10,45 @@
 
     <div class="auth-links">
       <% if (isAuthenticated) { %>
-      <a href="/auth/logout">Logout</a>
+        <a href="/account"><%= user.username %></a>
+        <a href="/auth/logout">Logout</a>
       <% } else { %>
-      <a href="/auth/login">Login</a>
-      <a href="/auth/register">Register</a>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Register</a>
       <% } %>
     </div>
 
     <h2>Messages</h2>
-    <% if (messages && messages.length > 0) { %> <% messages.forEach(message =>
-    { %>
-    <div class="message">
-      <div class="message-title"><%= message.title %></div>
-      <div class="message-content"><%= message.content %></div>
-      <div class="message-meta">
-        Posted on: <%= new Date(message.createdAt).toLocaleString() %> | Author:
-        <%= message.author %>
-      </div>
-    </div>
-    <% }); %> <% } else { %>
-    <p>No messages available.</p>
+
+    <% if (isAuthenticated) { %>
+      <% if (user.isMember) { %>
+        <form action="/messages/create" method="post">
+          <input type="text" name="title" placeholder="Title" />
+          <textarea name="content" placeholder="Content"></textarea>
+          <button type="submit">Create Message</button>
+        </form>
+      <% } else { %>
+        <p>Please upgrade to a member to create messages.</p>
+        <a href="/auth/upgrade">Upgrade</a>
+      <% } %>
+    <% } else { %>
+      <p>Please login to view messages.</p>
+    <% } %>
+
+    <% if (messages && messages.length > 0) { %>
+      <% messages.forEach((message) => { %>
+        <div class="message">
+          <div class="message-title"><%= message.title %></div>
+          <div class="message-content"><%= message.content %></div>
+          <div class="message-meta">
+            Posted on:
+            <%= user.isMember ? new Date(message.createdAt).toLocaleString() : "********" %>
+            | Author: <%= message.author %>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No messages available.</p>
     <% } %>
   </body>
 </html>

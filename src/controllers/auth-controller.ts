@@ -1,9 +1,10 @@
 import passport from "passport";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import { UserService } from "../services";
+import { AuthService, UserService } from "../services";
 import { LoginSchema, RegisterSchema } from "../validations/auth-validation";
 import { formatZodErrors } from "../utils/zod-formatter";
+import { SafeUser } from "../types/user";
 
 class AuthController {
   async register(req: Request, res: Response) {
@@ -88,6 +89,31 @@ class AuthController {
   async getRegister(req: Request, res: Response) {
     if (req.isAuthenticated()) return res.redirect("/");
     res.render("register");
+  }
+
+  async getUpgrade(req: Request, res: Response) {
+    if (!req.isAuthenticated()) return res.redirect("/auth/login");
+    if ((req.user as SafeUser).isMember) return res.redirect("/");
+
+    res.render("upgrade");
+  }
+
+  async upgrade(req: Request, res: Response) {
+    if (!req.isAuthenticated()) return res.redirect("/auth/login");
+
+    const user = req.user as SafeUser;
+    if (user.isMember) return res.redirect("/");
+
+    const { answer } = req.body;
+    if (answer !== "object") {
+      return res.render("upgrade", {
+        errors: ["Invalid answer."],
+      });
+    }
+
+    await AuthService.upgrade(user.id);
+
+    res.redirect("/");
   }
 
   async logout(req: Request, res: Response) {
