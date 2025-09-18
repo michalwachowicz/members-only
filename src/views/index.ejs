@@ -32,7 +32,7 @@
         <a href="/auth/upgrade">Upgrade</a>
       <% } %>
     <% } else { %>
-      <p>Please login to view messages.</p>
+      <p>Please login to add messages.</p>
     <% } %>
 
     <% if (messages && messages.length > 0) { %>
@@ -42,8 +42,13 @@
           <div class="message-content"><%= message.content %></div>
           <div class="message-meta">
             Posted on:
-            <%= user.isMember ? new Date(message.createdAt).toLocaleString() : "********" %>
-            | Author: <%= message.author %>
+            <%= user?.isMember ? new Date(message.createdAt).toLocaleString() : "********" %>
+            | Author: 
+            <% if (user?.isMember) { %>
+              <a href="/users/<%= message.userId %>"><%= message.author %></a>
+            <% } else { %>
+              <%= message.author %>
+            <% } %>
           </div>
         </div>
       <% }) %>

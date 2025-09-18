@@ -26,6 +26,7 @@ class MessageService {
         m.id, 
         m.title, 
         m.content, 
+        m.user_id,
         m.created_at,
         u.username,
         u.first_name,
