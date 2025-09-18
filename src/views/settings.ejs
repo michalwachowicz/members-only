@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members Only - Settings</title>
+</head>
+<body>
+  <h1>Settings</h1>
+
+  <form action="/account/update" method="post">
+    <input type="text" name="username" placeholder="Username" value="<%= user.username %>">
+    <input type="text" name="firstName" placeholder="First Name" value="<%= user.firstName %>">
+    <input type="text" name="lastName" placeholder="Last Name" value="<%= user.lastName %>">
+    <input type="password" name="currentPassword" placeholder="Current Password">
+    <input type="password" name="password" placeholder="New Password">
+    <input type="password" name="confirmPassword" placeholder="Confirm Password">
+    <button type="submit">Update</button>
+  </form>
+
+  <form action="/account/delete" method="post">
+    <button type="submit">Delete Account</button>
+  </form>
+  <a href="/account">Back to Account</a>
+</body>
+</html>

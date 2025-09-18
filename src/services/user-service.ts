@@ -60,6 +60,21 @@ class UserService {
     const dbRow = result.rows[0] as DbUserRow;
     return this.adaptDbRowToUser(dbRow);
   }
+
+  async updateUser(id: number, user: User): Promise<User> {
+    const { username, firstName, lastName, password } = user;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      "UPDATE users SET username = $1, first_name = $2, last_name = $3, password = $4 WHERE id = $5 RETURNING *",
+      [username, firstName, lastName, hashedPassword, id]
+    );
+    const dbRow = result.rows[0] as DbUserRow;
+    return this.adaptDbRowToUser(dbRow);
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    await pool.query("DELETE FROM users WHERE id = $1", [id]);
+  }
 }
 
 export default new UserService();
