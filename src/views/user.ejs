@@ -3,28 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Members Only - <%= user.username %></title>
+  <title><%= user.username %> | membersonly</title>
+  <%- include("partials/styles") %>
 </head>
 <body>
-  <h1><%= user.username %></h1>
+  <%- include("partials/header") %>
 
-  <p>Full Name: <%= user.firstName %> <%= user.lastName %></p>
+  <main class="main">
+    <h1 class="main__title"><%= user.firstName %> <%= user.lastName %> (<%= user.username %>)</h1>
 
-  <h2>Messages</h2>
-  
-  <% if (messages && messages.length > 0) { %>
-    <% messages.forEach((message) => { %>
-      <div class="message">
-        <div class="message-title"><%= message.title %></div>
-        <div class="message-content"><%= message.content %></div>
-        <div class="message-meta">
-          Posted on:
-          <%= new Date(message.createdAt).toLocaleString() %>
-        </div>
-      </div>
-    <% }) %>
-  <% } else { %>
-    <p>No messages available.</p>
-  <% } %>
+    <div class="user__info">
+      <span>Membership Status:</span> <%= user.isAdmin ? "Admin" : user.isMember ? "Member" : "Not Member" %>
+    </div>
+
+    <div class="user__info">
+      <span>Date Joined:</span> <%= new Date(user.createdAt).toLocaleString() %>
+    </div>
+
+    <%- include("partials/messages", { showMeta: false, className: "messages--user" }) %>
+  </main>
 </body>
 </html>

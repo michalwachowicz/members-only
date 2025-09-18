@@ -110,6 +110,14 @@ textarea {
   border-radius: 0 0 1rem 1rem;
 }
 
+.messages > .message:only-child {
+  border-radius: 1rem;
+}
+
+.messages--user {
+  margin-top: 2rem;
+}
+
 .message__meta {
   display: flex;
   align-items: center;
@@ -197,4 +205,18 @@ textarea {
 
 .form-group {
   width: 100%;
+}
+
+.user__info {
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+.user__info:first-child {
+  margin-top: 0;
+}
+
+.user__info span {
+  color: #ff5e5b;
+  font-weight: 600;
 }

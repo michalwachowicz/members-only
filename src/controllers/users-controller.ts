@@ -27,7 +27,11 @@ class UserController {
 
     const messages = await MessageService.getMessagesByUserId(user.id);
 
-    res.render("user", { user, messages });
+    res.render("user", {
+      user,
+      messages,
+      isAuthenticated: req.isAuthenticated(),
+    });
   }
 
   async getUsers(req: Request, res: Response) {
