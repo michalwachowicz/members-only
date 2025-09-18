@@ -8,26 +8,39 @@ import { formatZodErrors } from "../utils/zod-formatter";
 class AuthController {
   async register(req: Request, res: Response) {
     try {
-      const parsed = RegisterSchema.parse(req.body);
-      const { username, password, firstName, lastName } = parsed;
-      const newUser = await UserService.createUser({
+      const errors: string[] = [];
+      const existingUser = await UserService.getUserByUsername(
+        req.body.username
+      );
+
+      if (existingUser) {
+        errors.push("Username: Username already exists");
+      }
+
+      const parseResult = RegisterSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        errors.push(...formatZodErrors(parseResult.error));
+      }
+
+      if (errors.length > 0) {
+        return res.render("register", {
+          errors,
+          formData: req.body,
+        });
+      }
+
+      const { username, password, firstName, lastName } = parseResult.data!;
+      await UserService.createUser({
         username,
         password,
         firstName,
         lastName,
       });
 
-      const { password: _password, ...safeUser } = newUser;
-
-      res.render("register", {
-        success: true,
-        user: safeUser,
-        message: "Registration successful! You can now login.",
-      });
+      res.redirect("/auth/login");
     } catch (error) {
       res.render("register", {
-        success: false,
-        errors: formatZodErrors(error as ZodError),
+        errors: ["An unexpected error occurred. Please try again."],
         formData: req.body,
       });
     }
@@ -39,23 +52,20 @@ class AuthController {
       passport.authenticate("local", (err: any, user: any, info: any) => {
         if (err) {
           return res.render("login", {
-            success: false,
-            error: "An error occurred during login. Please try again.",
+            errors: ["An error occurred during login. Please try again."],
             formData: req.body,
           });
         }
         if (!user) {
           return res.render("login", {
-            success: false,
-            error: info?.message || "Invalid username or password.",
+            errors: [info?.message || "Invalid username or password."],
             formData: req.body,
           });
         }
         req.logIn(user, (err) => {
           if (err) {
             return res.render("login", {
-              success: false,
-              error: "An error occurred during login. Please try again.",
+              errors: ["An error occurred during login. Please try again."],
               formData: req.body,
             });
           }
@@ -64,7 +74,6 @@ class AuthController {
       })(req, res, next);
     } catch (error) {
       res.render("login", {
-        success: false,
         errors: formatZodErrors(error as ZodError),
         formData: req.body,
       });
@@ -85,8 +94,8 @@ class AuthController {
     req.logout((err) => {
       if (err) {
         return res.render("error", {
-          message: (err as Error).message,
           title: "Logout Error",
+          message: (err as Error).message,
         });
       }
       res.redirect("/");
