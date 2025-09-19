@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { MessageService } from "../services";
 import type { MessageCreate } from "../types/message";
 import type { SafeUser } from "../types/user";
+import { MessageSchema } from "../validations/message-validation";
+import { formatZodErrors } from "../utils/zod-formatter";
 
 class MessageController {
   async createMessage(req: Request, res: Response) {
@@ -18,9 +20,14 @@ class MessageController {
       }
 
       const { title, content } = req.body;
+      const { error } = MessageSchema.safeParse(req.body);
 
-      if (!title || !content) {
-        res.redirect("/messages/create");
+      if (error) {
+        res.render("create-message", {
+          errors: formatZodErrors(error),
+          user: req.user,
+          isAuthenticated: req.isAuthenticated(),
+        });
         return;
       }
 
@@ -30,9 +37,14 @@ class MessageController {
       await MessageService.createMessage(messageData);
       res.redirect("/");
     } catch (error) {
-      res.render("error", {
-        title: "Message Creation Error",
-        message: (error as Error).message,
+      res.render("create-message", {
+        errors: [
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again.",
+        ],
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
       });
     }
   }
