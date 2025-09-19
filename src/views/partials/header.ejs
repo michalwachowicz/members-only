@@ -5,15 +5,107 @@
 
   <div class="auth-links">
     <% if (isAuthenticated) { %>
-      <% if (user.isMember) { %>
-        <a href="/messages/create">Create Message</a>
-      <% } %>
-
-      <a href="/account"><%= user.username %></a>
-      <a href="/auth/logout">Logout</a>
+      <div class="user-dropdown" tabindex="0" role="button" aria-expanded="false" aria-haspopup="true">
+        <div class="user-dropdown__trigger">
+          <img 
+            src="/assets/images/user.svg" 
+            alt="User profile" 
+            class="user-dropdown__avatar"
+          />
+          <span class="user-dropdown__username"><%= user.username %></span>
+          <img src="/assets/images/dropdown.svg" alt="Dropdown" class="user-dropdown__arrow" />
+        </div>
+        <div class="user-dropdown__menu">
+          <% if (user.isMember) { %>
+            <a href="/messages/create" class="user-dropdown__item">
+              <img src="/assets/images/message.svg" alt="Message" class="user-dropdown__item-icon" />
+              Create Message
+            </a>
+          <% } %>
+          <a href="/account" class="user-dropdown__item">
+            <img src="/assets/images/account.svg" alt="Account" class="user-dropdown__item-icon" />
+            Your Account
+          </a>
+          <a href="/settings" class="user-dropdown__item">
+            <img src="/assets/images/settings.svg" alt="Settings" class="user-dropdown__item-icon" />
+            Settings
+          </a>
+          <hr class="user-dropdown__divider">
+          <a href="/auth/logout" class="user-dropdown__item user-dropdown__item--danger">
+            <img src="/assets/images/logout.svg" alt="Logout" class="user-dropdown__item-icon" />
+            Logout
+          </a>
+        </div>
+      </div>
     <% } else { %>
-      <a href="/auth/login">Login</a>
-      <a href="/auth/register">Register</a>
+      <div class="auth-links">
+        <a class="auth-links__item" href="/auth/login">Login</a>
+        <a class="auth-links__item" href="/auth/register">Register</a>
+      </div>
     <% } %>
   </div>
 </header>
+
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => {
+    const dropdown = document.querySelector(".user-dropdown");
+    if (!dropdown) return;
+
+    const trigger = dropdown.querySelector(".user-dropdown__trigger");
+    const arrow = dropdown.querySelector(".user-dropdown__arrow");
+    const header = document.querySelector(".header");
+    
+    const isOpen = () => dropdown.classList.contains("user-dropdown--open");
+    
+    const toggle = (show) => {
+      const shouldOpen = show !== undefined ? show : !isOpen();
+      dropdown.classList.toggle("user-dropdown--open", shouldOpen);
+      dropdown.setAttribute("aria-expanded", shouldOpen);
+      arrow.style.transform = shouldOpen ? "rotate(180deg)" : "rotate(0deg)";
+    };
+
+    trigger.addEventListener("click", (e) => { 
+      e.preventDefault(); 
+      toggle(); 
+    });
+
+    dropdown.addEventListener("focus", () => toggle(true));
+    
+    dropdown.addEventListener("focusout", (e) => {
+      setTimeout(() => {
+        if (!header.contains(document.activeElement)) {
+          toggle(false);
+        } else if (document.activeElement === trigger || document.activeElement === header.querySelector('.logo a')) {
+          toggle(false);
+        }
+      }, 0);
+    });
+    
+    dropdown.addEventListener("mouseenter", () => toggle(true));
+    dropdown.addEventListener("mouseleave", () => toggle(false));
+    
+    const menuItems = dropdown.querySelectorAll('.user-dropdown__item');
+    menuItems.forEach(item => {
+      item.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+
+        e.preventDefault(); 
+        item.click();
+      });
+    });
+
+    dropdown.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") toggle(false);
+    });
+
+    document.addEventListener("focusin", (e) => {
+      if (!header.contains(e.target)) toggle(false);
+    });
+    
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target)) toggle(false);
+    });
+    
+    window.addEventListener("resize", () => window.innerWidth <= 768 && toggle(false));
+  });
+</script>
