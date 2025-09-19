@@ -32,10 +32,13 @@
       <div class="acccount-not-member">
         You are not a member. Please upgrade to a member to unlock all features.
       </div>
-      <a class="btn" href="/auth/upgrade">Upgrade</a>
+      <div class="form__actions">
+        <a class="btn" href="/auth/upgrade">Upgrade</a>
+        <a class="btn btn--settings" href="/settings">Account Settings</a>
+      </div>
+    </div>
     <% } %>
 
-    <a class="btn btn--settings" href="/settings">Account Settings</a>
 
     <%- include("partials/messages", { showAuthor: false, className: "messages--user", user: account }) %>
   </main>

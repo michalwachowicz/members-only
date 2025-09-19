@@ -1,26 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Members Only - Settings</title>
-</head>
-<body>
-  <h1>Settings</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings | membersonly</title>
+    <%- include("partials/styles") %>
+  </head>
+  <body>
+    <%- include("partials/header") %>
 
-  <form action="/account/update" method="post">
-    <input type="text" name="username" placeholder="Username" value="<%= user.username %>">
-    <input type="text" name="firstName" placeholder="First Name" value="<%= user.firstName %>">
-    <input type="text" name="lastName" placeholder="Last Name" value="<%= user.lastName %>">
-    <input type="password" name="currentPassword" placeholder="Current Password">
-    <input type="password" name="password" placeholder="New Password">
-    <input type="password" name="confirmPassword" placeholder="Confirm Password">
-    <button type="submit">Update</button>
-  </form>
+    <main class="main">
+      <h2 class="main__title">Account Settings</h2>
 
-  <form action="/account/delete" method="post">
-    <button type="submit">Delete Account</button>
-  </form>
-  <a href="/account">Back to Account</a>
-</body>
+      <%- include("partials/errors") %>
+
+      <% if (success) { %>
+        <div class="success">
+          <div class="success__title">✅ Profile updated successfully</div>
+          <p class="success__message">Your profile has been updated successfully</p>
+        </div>
+      <% } %>
+
+      <form class="form form--settings" action="/settings/update" method="post">
+        <div class="form-group">
+          <label for="username">
+            Username <span class="required" aria-label="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            name="username" 
+            value="<%= user.username %>" 
+            required 
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="firstName">
+            First Name <span class="required" aria-label="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            name="firstName" 
+            value="<%= user.firstName %>" 
+            required 
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">
+            Last Name <span class="required" aria-label="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            name="lastName" 
+            value="<%= user.lastName %>" 
+            required 
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form__actions">
+          <a class="btn btn--secondary" href="/settings/password">Change Password</a>
+          <a class="btn btn--danger" href="/settings/delete">Delete Account</a>
+          <button class="btn" type="submit">Update Profile</button>
+        </div>
+      </form>
+    </main>
+  </body>
 </html>

@@ -10,6 +10,13 @@
     <%- include("partials/header") %>
 
     <main class="main">
+      <% if (success === "delete") { %>
+        <div class="success">
+          <div class="success__title">✅ Account deleted successfully</div>
+          <p class="success__message">Your account has been deleted successfully</p>
+        </div>
+      <% } %>
+
       <%- include("partials/messages", { showAuthor: true }) %>
     </main>
   </body>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delete Account | membersonly</title>
+    <%- include("partials/styles") %>
+  </head>
+  <body>
+    <%- include("partials/header") %>
+
+    <main class="main">
+      <h2 class="main__title">Delete Account</h2>
+
+      <div class="errors">
+        <div class="errors__title">⚠️ Warning: This action cannot be undone!</div>
+
+        <p class="errors__message">
+          Deleting your account will permanently remove all your data, including:
+        </p>
+
+        <ul class="errors__list">
+          <li class="errors__item">Your profile information</li>
+          <li class="errors__item">All messages you've created</li>
+          <li class="errors__item">Your membership status</li>
+          <li class="errors__item">All associated data</li>
+        </ul>
+      </div>
+
+      <%- include("partials/errors") %>
+
+      <form class="form form--delete" action="/settings/delete" method="post">
+        <div class="form-group">
+          <label for="confirmUsername">
+            Enter your username to confirm: 
+            <span class="required" aria-label="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            name="confirmUsername" 
+            required 
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">
+            Enter your password to confirm: 
+            <span class="required" aria-label="required">*</span>
+          </label>
+          <input 
+            type="password" 
+            name="confirmPassword" 
+            required 
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form__actions">
+          <a class="btn btn--secondary" href="/settings">Cancel</a>
+          <button class="btn btn--danger" type="submit">Delete Account</button>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>

@@ -36,7 +36,7 @@ textarea {
   font-size: 1rem;
   color: #ffffff;
   background-color: transparent;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   font-family: inherit;
 }
 
@@ -195,6 +195,14 @@ textarea {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
+.btn--secondary {
+  background-color: #3a3a3c;
+}
+
+.btn--danger {
+  background-color: #dc2626;
+}
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -208,10 +216,7 @@ textarea {
   margin-top: 1.5rem;
 }
 
-.form--create-message,
-.form--upgrade,
-.form--login,
-.form--register {
+.form {
   display: flex;
   flex-direction: column;
   align-items: end;
@@ -224,6 +229,12 @@ textarea {
 
 .form-group {
   width: 100%;
+}
+
+.form__actions {
+  display: flex;
+  align-items: end;
+  gap: 0.75rem;
 }
 
 .user__info {
@@ -250,22 +261,46 @@ textarea {
   border: 1rem solid #2d2d2d;
 }
 
-.errors {
+.errors,
+.success {
   padding: 1rem;
   border-radius: 0.5rem;
-  border: 1px solid #dc2626;
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.06);
   margin-bottom: 1.25rem;
 }
 
-.errors__title {
+.errors {
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.06);
+}
+
+.success {
+  border: 1px solid #16a34a;
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.06);
+}
+
+.errors__title,
+.success__title {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
+.success__message {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.errors__message {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
 .errors__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   padding-left: 1.125rem;
 }
 

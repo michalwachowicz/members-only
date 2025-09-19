@@ -31,6 +31,7 @@ app.get("/", async (req, res) => {
       user: req.user,
       messages: messages,
       isAuthenticated: req.isAuthenticated(),
+      success: req.query.success || undefined,
     });
   } catch (error) {
     console.error("Error fetching messages:", error);
