@@ -25,7 +25,7 @@ textarea {
 
 label {
   font-size: 1rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
 input,
@@ -209,7 +209,9 @@ textarea {
 }
 
 .form--create-message,
-.form--upgrade {
+.form--upgrade,
+.form--login,
+.form--register {
   display: flex;
   flex-direction: column;
   align-items: end;
@@ -265,4 +267,18 @@ textarea {
 
 .errors__list {
   padding-left: 1.125rem;
+}
+
+.link {
+  color: #ff5e5b;
+  font-weight: 600;
+}
+
+.account-not-member {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.required {
+  color: #dc2626;
 }

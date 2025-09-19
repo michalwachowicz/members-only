@@ -3,33 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Members Only - Login</title>
+    <title>Login | membersonly</title>
+    <%- include("partials/styles") %>
   </head>
   <body>
-    <h1>Login</h1>
+    <%- include("partials/header") %>
 
-    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
-    <div style="color: red; margin-bottom: 20px">
-      <p><strong>Please fix the following errors:</strong></p>
-      <ul style="margin: 10px 0; padding-left: 20px">
-        <% errors.forEach(function(error) { %>
-        <li><%= error %></li>
-        <% }); %>
-      </ul>
-    </div>
-    <% } %>
+    <main class="main">
+      <h2 class="main__title">Login to your account</h2>
 
-    <form action="/auth/login" method="post">
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value="<%= typeof formData !== 'undefined' && formData.username ? formData.username : '' %>"
-      />
-      <input type="password" name="password" placeholder="Password" />
-      <button type="submit">Login</button>
-    </form>
+      <%- include("partials/errors") %>
 
-    <p>Don't have an account? <a href="/auth/register">Register here</a></p>
+      <form class="form form--login" action="/auth/login" method="post">
+        <div class="form-group">
+          <label for="username">
+            Username <span class="required" aria-label="required">*</span>
+          </label>
+          <input
+            type="text"
+            name="username"
+            value="<%= typeof formData !== 'undefined' && formData.username ? formData.username : '' %>"
+            required
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">
+            Password <span class="required" aria-label="required">*</span>
+          </label>
+          <input 
+            type="password" 
+            name="password" 
+            required 
+            aria-required="true"
+          />
+        </div>
+
+        <button class="btn" type="submit">Login</button>
+      </form>
+
+      <p class="account-not-member">
+        Don't have an account? <a class="link" href="/auth/register">Register here</a>
+      </p>
+    </main>
   </body>
 </html>

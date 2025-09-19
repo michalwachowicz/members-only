@@ -27,6 +27,8 @@ class AuthController {
         return res.render("register", {
           errors,
           formData: req.body,
+          isAuthenticated: false,
+          user: null,
         });
       }
 
@@ -43,6 +45,8 @@ class AuthController {
       res.render("register", {
         errors: ["An unexpected error occurred. Please try again."],
         formData: req.body,
+        isAuthenticated: false,
+        user: null,
       });
     }
   }
@@ -55,12 +59,16 @@ class AuthController {
           return res.render("login", {
             errors: ["An error occurred during login. Please try again."],
             formData: req.body,
+            isAuthenticated: false,
+            user: null,
           });
         }
         if (!user) {
           return res.render("login", {
             errors: [info?.message || "Invalid username or password."],
             formData: req.body,
+            isAuthenticated: false,
+            user: null,
           });
         }
         req.logIn(user, (err) => {
@@ -68,6 +76,8 @@ class AuthController {
             return res.render("login", {
               errors: ["An error occurred during login. Please try again."],
               formData: req.body,
+              isAuthenticated: false,
+              user: null,
             });
           }
           return res.redirect("/");
@@ -76,6 +86,8 @@ class AuthController {
     } catch (error) {
       res.render("login", {
         errors: formatZodErrors(error as ZodError),
+        isAuthenticated: false,
+        user: null,
         formData: req.body,
       });
     }
@@ -83,12 +95,20 @@ class AuthController {
 
   async getLogin(req: Request, res: Response) {
     if (req.isAuthenticated()) return res.redirect("/");
-    res.render("login");
+
+    res.render("login", {
+      isAuthenticated: false,
+      user: null,
+    });
   }
 
   async getRegister(req: Request, res: Response) {
     if (req.isAuthenticated()) return res.redirect("/");
-    res.render("register");
+
+    res.render("register", {
+      isAuthenticated: false,
+      user: null,
+    });
   }
 
   async getUpgrade(req: Request, res: Response) {
