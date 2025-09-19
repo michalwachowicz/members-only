@@ -95,7 +95,10 @@ class AuthController {
     if (!req.isAuthenticated()) return res.redirect("/auth/login");
     if ((req.user as SafeUser).isMember) return res.redirect("/");
 
-    res.render("upgrade");
+    res.render("upgrade", {
+      user: req.user,
+      isAuthenticated: req.isAuthenticated(),
+    });
   }
 
   async upgrade(req: Request, res: Response) {
@@ -108,6 +111,8 @@ class AuthController {
     if (answer !== "object") {
       return res.render("upgrade", {
         errors: ["Invalid answer."],
+        isAuthenticated: req.isAuthenticated(),
+        user: req.user,
       });
     }
 

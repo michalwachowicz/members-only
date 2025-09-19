@@ -1,0 +1,13 @@
+<% if (typeof locals.errors !== 'undefined' && locals.errors.length > 0) { %>
+  <div class="errors">
+    <div class="errors__title">Please fix the following errors:</div>
+
+    <ul class="errors__list">
+      <% locals.errors.forEach(error => { %>
+        <li class="errors__item">
+          <%= error %>
+        </li>
+      <% }); %>
+    </ul>
+  </div>
+<% } %>

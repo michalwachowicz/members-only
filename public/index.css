@@ -208,11 +208,16 @@ textarea {
   margin-top: 1.5rem;
 }
 
-.form--create-message {
+.form--create-message,
+.form--upgrade {
   display: flex;
   flex-direction: column;
   align-items: end;
   gap: 1rem;
+}
+
+.form--upgrade {
+  gap: 0;
 }
 
 .form-group {
@@ -235,4 +240,29 @@ textarea {
 
 .acccount-not-member {
   margin-top: 2.5rem;
+}
+
+.language-javascript {
+  display: block;
+  margin: 0.5rem 0 1rem;
+  border: 1rem solid #2d2d2d;
+}
+
+.errors {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.06);
+  margin-bottom: 1.25rem;
+}
+
+.errors__title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.errors__list {
+  padding-left: 1.125rem;
 }
