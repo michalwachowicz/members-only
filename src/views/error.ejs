@@ -4,16 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      Members Only - <%= typeof title !== 'undefined' ? title : 'Error' %>
+      <%= typeof title !== 'undefined' ? title : 'Error' %> | membersonly
     </title>
+    <%- include("partials/styles") %>
   </head>
   <body>
-    <h1><%= typeof title !== 'undefined' ? title : 'Error' %></h1>
+    <main class="main">
+      <h1 class="main__title error__title">
+        <%= typeof title !== 'undefined' ? title : 'Error' %>
+      </h1>
 
-    <div style="color: red; margin-bottom: 20px">
-      <p><%= message %></p>
-    </div>
+      <div class="error__message">
+        <p><%= message %></p>
+      </div>
 
-    <p><a href="/">Go back to home</a></p>
+      <a class="btn" href="/">Go back to home</a>
+    </main>
   </body>
 </html>

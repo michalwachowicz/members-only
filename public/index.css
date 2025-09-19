@@ -330,6 +330,15 @@ textarea {
   padding-left: 1.125rem;
 }
 
+.error__title {
+  color: #dc2626;
+}
+
+.error__message {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
 .link {
   color: #ff5e5b;
   font-weight: 600;

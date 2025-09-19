@@ -7,4 +7,4 @@ export interface Message {
   relativeTime: string;
 }
 
-export type MessageCreate = Omit<Message, "id" | "createdAt">;
+export type MessageCreate = Omit<Message, "id" | "createdAt" | "relativeTime">;
