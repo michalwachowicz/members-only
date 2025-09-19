@@ -489,3 +489,167 @@ textarea {
     display: none;
   }
 }
+
+.users-table {
+  margin-top: 1rem;
+}
+
+.users-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #181819;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.users-table__header {
+  background: linear-gradient(135deg, #232324 0%, #2a2a2c 100%);
+}
+
+.users-table__header-cell {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #ff5e5b;
+}
+
+.users-table__row {
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #232324;
+}
+
+.users-table__row:hover {
+  background-color: #232324;
+}
+
+.users-table__row:last-child {
+  border-bottom: none;
+}
+
+.users-table__cell {
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  color: #e0e2e4;
+  vertical-align: middle;
+}
+
+.users-table__link {
+  color: #ff5e5b;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.users-table__link:hover {
+  color: #ff7a77;
+  text-decoration: underline;
+}
+
+.users-table__name {
+  font-weight: 500;
+}
+
+.users-table__date {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.membership-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.membership-status--admin {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.membership-status--member {
+  background-color: #059669;
+  color: #ffffff;
+}
+
+.membership-status--not-member {
+  background-color: #6b7280;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .users-table__table {
+    font-size: 0.8rem;
+  }
+
+  .users-table__header-cell,
+  .users-table__cell {
+    padding: 0.75rem 1rem;
+  }
+
+  .users-table__header-cell:first-child,
+  .users-table__cell:first-child {
+    padding-left: 1rem;
+  }
+
+  .users-table__header-cell:last-child,
+  .users-table__cell:last-child {
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .users-table__table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .users-table__header,
+  .users-table__body,
+  .users-table__row,
+  .users-table__header-cell,
+  .users-table__cell {
+    display: block;
+  }
+
+  .users-table__header-row {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .users-table__row {
+    border: 1px solid #232324;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: #181819;
+  }
+
+  .users-table__cell {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .users-table__cell:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    width: 45%;
+    padding-right: 1rem;
+    white-space: nowrap;
+    font-weight: 600;
+    color: #ff5e5b;
+  }
+}

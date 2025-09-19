@@ -47,7 +47,11 @@ class UserController {
     if (!(req.user as SafeUser).isMember) return res.redirect("/auth/upgrade");
 
     const users = await UserService.getSafeUsers();
-    res.render("users", { users });
+    res.render("users", {
+      users,
+      isAuthenticated: req.isAuthenticated(),
+      user: req.user,
+    });
   }
 }
 

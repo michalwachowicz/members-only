@@ -22,15 +22,26 @@
               Create Message
             </a>
           <% } %>
+
           <a href="/account" class="user-dropdown__item">
             <img src="/assets/images/account.svg" alt="Account" class="user-dropdown__item-icon" />
             Your Account
           </a>
+
+          <% if (user.isMember) { %>
+            <a href="/users" class="user-dropdown__item">
+              <img src="/assets/images/users.svg" alt="Users" class="user-dropdown__item-icon" />
+              All Users
+            </a>
+          <% } %>
+
           <a href="/settings" class="user-dropdown__item">
             <img src="/assets/images/settings.svg" alt="Settings" class="user-dropdown__item-icon" />
             Settings
           </a>
+
           <hr class="user-dropdown__divider">
+
           <a href="/auth/logout" class="user-dropdown__item user-dropdown__item--danger">
             <img src="/assets/images/logout.svg" alt="Logout" class="user-dropdown__item-icon" />
             Logout

@@ -3,30 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Members Only - Users</title>
+  <title>Users | membersonly</title>
+  <%- include("partials/styles") %>
 </head>
 <body>
-  <h1>Users</h1>
+  <%- include("partials/header") %>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Full Name</th>
-        <th>Membership Status</th>
-        <th>Date Joined</th>
-      </tr>
-      <tbody>
+  <main class="main">
+    <h2 class="main__title">All Users</h2>
+
+  <div class="users-table">
+    <table class="users-table__table">
+      <thead class="users-table__header">
+        <tr class="users-table__header-row">
+          <th class="users-table__header-cell">Username</th>
+          <th class="users-table__header-cell">Full Name</th>
+          <th class="users-table__header-cell">Membership Status</th>
+          <th class="users-table__header-cell">Date Joined</th>
+        </tr>
+      </thead>
+      <tbody class="users-table__body">
         <% users.forEach((user) => { %>
-          <tr>
-            <td><a href="/users/<%= user.id %>"><%= user.username %></a></td>
-            <td><%= user.firstName %> <%= user.lastName %></td>
-            <td><%= user.isAdmin ? "Admin" : user.isMember ? "Member" : "Not Member" %></td>
-            <td><%= new Date(user.createdAt).toLocaleString() %></td>
+          <tr class="users-table__row">
+            <td class="users-table__cell" data-label="Username">
+              <a href="/users/<%= user.id %>" class="users-table__link"><%= user.username %></a>
+            </td>
+            <td class="users-table__cell" data-label="Full Name">
+              <span class="users-table__name"><%= user.firstName %> <%= user.lastName %></span>
+            </td>
+            <td class="users-table__cell" data-label="Membership Status">
+              <span class="membership-status membership-status--<%= user.isAdmin ? 'admin' : user.isMember ? 'member' : 'not-member' %>">
+                <%= user.isAdmin ? "Admin" : user.isMember ? "Member" : "Not Member" %>
+              </span>
+            </td>
+            <td class="users-table__cell" data-label="Date Joined">
+              <span class="users-table__date"><%= new Date(user.createdAt).toLocaleString() %></span>
+            </td>
           </tr>
         <% }) %>
       </tbody>
-    </thead>
-  </table>
+    </table>
+  </div>
+  </main>
 </body>
 </html>
