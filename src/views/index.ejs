@@ -10,10 +10,12 @@
     <%- include("partials/header") %>
 
     <main class="main">
-      <% if (success === "delete") { %>
+      <% if (success === "delete" || success === "upgrade") { %>
+        <% const action = success === "delete" ? "deleted" : "upgraded"; %>
+
         <div class="success">
-          <div class="success__title">✅ Account deleted successfully</div>
-          <p class="success__message">Your account has been deleted successfully</p>
+          <div class="success__title">✅ Account <%= action %> successfully</div>
+          <p class="success__message">Your account has been <%= action %> successfully</p>
         </div>
       <% } %>
 

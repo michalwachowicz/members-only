@@ -138,7 +138,7 @@ class AuthController {
 
     await AuthService.upgrade(user.id);
 
-    res.redirect("/");
+    res.redirect("/?success=upgrade");
   }
 
   async logout(req: Request, res: Response) {
