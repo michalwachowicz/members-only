@@ -8,7 +8,10 @@ class AccountController {
 
     const user = req.user as SafeUser;
     const account = await UserService.getSafeUserById(user.id);
-    const messages = await MessageService.getMessagesByUserId(user.id);
+    const messages = await MessageService.getMessagesByUserId(
+      user.id,
+      user.isMember
+    );
 
     res.render("account", {
       account,

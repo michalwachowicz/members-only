@@ -23,8 +23,13 @@
               <% } %>
               <span class="message__meta-text-separator">&#183;</span>
             <% } %>
-            <span class="message__meta-text-date <%= user?.isMember ? '' : 'text-muted' %>">
-              <%= user?.isMember ? new Date(message.createdAt).toLocaleString() : '*********' %>
+            <span 
+              class="message__meta-text-date <%= user?.isMember ? '' : 'text-muted' %>"
+              <% if (user?.isMember) { %>
+                title="<%= new Date(message.createdAt).toLocaleString() %>"
+              <% } %>
+            >
+              <%= message.relativeTime %>
             </span>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import pool from "../db/pool";
 import type { Message, MessageCreate } from "../types/message";
+import { getRelativeTime } from "../utils/time";
 
 interface DbMessageRow {
   id: number;
@@ -10,13 +11,14 @@ interface DbMessageRow {
 }
 
 class MessageService {
-  private adaptDbRowToMessage(dbRow: DbMessageRow): Message {
+  private adaptDbRowToMessage(dbRow: DbMessageRow, isMember: boolean): Message {
     return {
       id: dbRow.id,
       userId: dbRow.user_id,
       title: dbRow.title,
       content: dbRow.content,
       createdAt: dbRow.created_at,
+      relativeTime: isMember ? getRelativeTime(dbRow.created_at) : "*********",
     };
   }
 
@@ -37,7 +39,7 @@ class MessageService {
     `);
 
     return messages.rows.map((row) => ({
-      ...this.adaptDbRowToMessage(row),
+      ...this.adaptDbRowToMessage(row, isMember),
       author: isMember
         ? `${row.first_name} ${row.last_name} (${row.username})`
         : "******** (********)",
@@ -53,12 +55,15 @@ class MessageService {
     return newMessage.rows[0];
   }
 
-  async getMessagesByUserId(userId: number): Promise<Message[]> {
+  async getMessagesByUserId(
+    userId: number,
+    isMember: boolean
+  ): Promise<Message[]> {
     const messages = await pool.query(
       "SELECT * FROM messages WHERE user_id = $1 ORDER BY created_at DESC",
       [userId]
     );
-    return messages.rows.map((row) => this.adaptDbRowToMessage(row));
+    return messages.rows.map((row) => this.adaptDbRowToMessage(row, isMember));
   }
 }
 

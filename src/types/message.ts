@@ -4,6 +4,7 @@ export interface Message {
   title: string;
   content: string;
   createdAt: Date;
+  relativeTime: string;
 }
 
 export type MessageCreate = Omit<Message, "id" | "createdAt">;
