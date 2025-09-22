@@ -55,6 +55,22 @@ class MessageService {
     return newMessage.rows[0];
   }
 
+  async getMessageById(id: number): Promise<Message | null> {
+    const result = await pool.query("SELECT * FROM messages WHERE id = $1", [
+      id,
+    ]);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return this.adaptDbRowToMessage(result.rows[0], true);
+  }
+
+  async deleteMessage(id: number): Promise<void> {
+    await pool.query("DELETE FROM messages WHERE id = $1", [id]);
+  }
+
   async getMessagesByUserId(
     userId: number,
     isMember: boolean

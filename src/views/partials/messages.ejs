@@ -2,6 +2,14 @@
   <% if (messages && messages.length > 0) { %>
     <% messages.forEach((message) => { %>
       <div class="message">
+        <% if (message.canDelete) { %>
+          <div class="message__delete">
+            <a href="/messages/delete/<%= message.id %>/confirm" class="message__delete-btn">
+              <img src="/assets/images/delete.svg" alt="Delete" />
+            </a>
+          </div>
+        <% } %>
+
         <div class="message__meta">
           <% if (showAuthor) { %>
             <img

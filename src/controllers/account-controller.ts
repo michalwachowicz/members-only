@@ -15,7 +15,10 @@ class AccountController {
 
     res.render("account", {
       account,
-      messages,
+      messages: messages.map((message) => ({
+        ...message,
+        canDelete: true,
+      })),
       isAuthenticated: req.isAuthenticated(),
     });
   }

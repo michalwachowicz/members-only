@@ -24,12 +24,16 @@ initializeRoutes(app);
 
 app.get("/", async (req, res) => {
   try {
-    const isMember = (req.user as SafeUser)?.isMember || false;
+    const user = req.user as SafeUser;
+    const isMember = user ? user.isMember : false;
     const messages = await MessageService.getMessages(isMember);
 
     res.render("index", {
       user: req.user,
-      messages: messages,
+      messages: messages.map((message) => ({
+        ...message,
+        canDelete: user ? user.id === message.userId || user.isAdmin : false,
+      })),
       isAuthenticated: req.isAuthenticated(),
       success: req.query.success || undefined,
     });

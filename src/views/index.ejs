@@ -10,12 +10,13 @@
     <%- include("partials/header") %>
 
     <main class="main">
-      <% if (success === "delete" || success === "upgrade") { %>
-        <% const action = success === "delete" ? "deleted" : "upgraded"; %>
+      <% if (success === "delete" || success === "upgrade" || success === "deleteMessage") { %>
+        <% const action = success === "delete" || success === "deleteMessage" ? "deleted" : "upgraded"; %>
+        <% const type = success === "deleteMessage" ? "Message" : "Account"; %>
 
         <div class="success">
-          <div class="success__title">✅ Account <%= action %> successfully</div>
-          <p class="success__message">Your account has been <%= action %> successfully</p>
+          <div class="success__title">✅ <%= type %> <%= action %> successfully</div>
+          <p class="success__message">Your <%= type.toLowerCase() %> has been <%= action %> successfully</p>
         </div>
       <% } %>
 

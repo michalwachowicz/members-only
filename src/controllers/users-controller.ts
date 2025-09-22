@@ -5,7 +5,9 @@ import { MessageService, UserService } from "../services";
 class UserController {
   async getUser(req: Request, res: Response) {
     if (!req.isAuthenticated()) return res.redirect("/auth/login");
-    if (!(req.user as SafeUser).isMember) return res.redirect("/auth/upgrade");
+
+    const authUser = req.user as SafeUser;
+    if (!authUser.isMember) return res.redirect("/auth/upgrade");
 
     const id = req.params.id;
     if (!id || isNaN(Number(id))) {
@@ -35,9 +37,14 @@ class UserController {
       user.isMember
     );
 
+    const canDelete = authUser.id === user.id || authUser.isAdmin;
+
     res.render("user", {
       user,
-      messages,
+      messages: messages.map((message) => ({
+        ...message,
+        canDelete,
+      })),
       isAuthenticated: req.isAuthenticated(),
     });
   }
