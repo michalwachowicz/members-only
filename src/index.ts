@@ -47,6 +47,15 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.use((req, res) => {
+  res.status(404).render("error", {
+    title: "Page Not Found",
+    message: "The page you're looking for doesn't exist.",
+    user: req.user,
+    isAuthenticated: req.isAuthenticated(),
+  });
+});
+
 app.listen(PORT, async () => {
   LOGGER.info(`Server is running on http://localhost:${PORT}`);
   await initDatabase();

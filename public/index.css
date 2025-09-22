@@ -231,6 +231,16 @@ textarea {
   background-color: #dc2626;
 }
 
+.btn--error {
+  max-width: 240px;
+}
+
+@media screen and (max-width: 500px) {
+  .btn--error {
+    max-width: 100%;
+  }
+}
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -352,11 +362,12 @@ textarea {
 
 .error__title {
   color: #dc2626;
+  margin-bottom: 1.25rem;
 }
 
 .error__message {
   font-size: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.75em;
 }
 
 .link {

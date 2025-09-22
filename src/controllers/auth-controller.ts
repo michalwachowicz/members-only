@@ -147,6 +147,8 @@ class AuthController {
         return res.render("error", {
           title: "Logout Error",
           message: (err as Error).message,
+          user: req.user,
+          isAuthenticated: req.isAuthenticated(),
         });
       }
       res.redirect("/");

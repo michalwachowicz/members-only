@@ -73,6 +73,8 @@ class MessageController {
         return res.render("error", {
           title: "Not Found",
           message: "Message not found",
+          user: req.user,
+          isAuthenticated: req.isAuthenticated(),
         });
       }
 
@@ -81,6 +83,8 @@ class MessageController {
         return res.render("error", {
           title: "Forbidden",
           message: "You are not allowed to delete this message",
+          user: req.user,
+          isAuthenticated: req.isAuthenticated(),
         });
       }
 
@@ -93,6 +97,8 @@ class MessageController {
       res.render("error", {
         title: "Error",
         message: "An error occurred while loading the message",
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
       });
     }
   }
@@ -111,6 +117,8 @@ class MessageController {
         return res.render("error", {
           title: "Not Found",
           message: "Message not found",
+          user: req.user,
+          isAuthenticated: req.isAuthenticated(),
         });
       }
 
@@ -119,6 +127,8 @@ class MessageController {
         return res.render("error", {
           title: "Forbidden",
           message: "You are not allowed to delete this message",
+          user: req.user,
+          isAuthenticated: req.isAuthenticated(),
         });
       }
 
@@ -128,6 +138,8 @@ class MessageController {
       res.render("error", {
         title: "Error",
         message: "An error occurred while deleting the message",
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
       });
     }
   }

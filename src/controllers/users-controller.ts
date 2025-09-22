@@ -14,6 +14,8 @@ class UserController {
       res.render("error", {
         title: "Invalid User ID",
         message: "Invalid user ID",
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
       });
       return;
     }
@@ -28,6 +30,8 @@ class UserController {
       res.render("error", {
         title: "User Not Found",
         message: "User not found",
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
       });
       return;
     }

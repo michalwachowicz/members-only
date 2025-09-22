@@ -9,6 +9,8 @@
     <%- include("partials/styles") %>
   </head>
   <body>
+    <%- include("partials/header") %>
+
     <main class="main">
       <h1 class="main__title error__title">
         <%= typeof title !== 'undefined' ? title : 'Error' %>
@@ -18,7 +20,7 @@
         <p><%= message %></p>
       </div>
 
-      <a class="btn" href="/">Go back to home</a>
+      <a class="btn btn--error" href="/">Go back to home</a>
     </main>
   </body>
 </html>

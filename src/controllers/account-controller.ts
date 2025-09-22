@@ -55,6 +55,8 @@ class AccountController {
       res.render("error", {
         title: "Account Deletion Error",
         message: (err as Error).message,
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
       });
     }
   }
