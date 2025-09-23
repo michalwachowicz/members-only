@@ -6,8 +6,6 @@ import { AppError } from "../error/AppError";
 
 class AccountController {
   async getAccount(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
     const user = req.user as SafeUser;
     const account = await UserService.getSafeUserById(user.id);
     const messages = await MessageService.getMessagesByUserId(
@@ -26,17 +24,8 @@ class AccountController {
   }
 
   async updateAccount(req: Request, res: Response, next: NextFunction) {
-    const { requestId, ip } = req;
-
-    if (!req.isAuthenticated()) {
-      LOGGER.warn("Unauthenticated account update attempt", {
-        requestId,
-        ip,
-      });
-      return res.redirect("/auth/login");
-    }
-
     const user = req.user as User;
+    const { requestId, ip } = req;
     const { username, firstName, lastName, password } = req.body;
 
     LOGGER.info("Account update attempt", {
@@ -89,17 +78,8 @@ class AccountController {
   }
 
   async deleteAccount(req: Request, res: Response, next: NextFunction) {
-    const { requestId, ip } = req;
-
-    if (!req.isAuthenticated()) {
-      LOGGER.warn("Unauthenticated account deletion attempt", {
-        requestId,
-        ip,
-      });
-      return res.redirect("/auth/login");
-    }
-
     const user = req.user as User;
+    const { requestId, ip } = req;
 
     LOGGER.info("Account deletion attempt", {
       requestId,

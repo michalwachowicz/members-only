@@ -13,27 +13,7 @@ class MessageController {
     const { requestId, ip } = req;
 
     try {
-      if (!req.isAuthenticated()) {
-        LOGGER.warn("Unauthenticated message creation attempt", {
-          requestId,
-          ip,
-        });
-        res.redirect("/auth/login");
-        return;
-      }
-
       const user = req.user as SafeUser;
-      if (!user.isMember) {
-        LOGGER.warn("Non-member message creation attempt", {
-          requestId,
-          userId: user.id,
-          username: user.username,
-          ip,
-        });
-        res.redirect("/auth/upgrade");
-        return;
-      }
-
       const { title, content } = req.body;
       const { error } = MessageSchema.safeParse(req.body);
 
@@ -96,33 +76,11 @@ class MessageController {
   }
 
   async getCreateMessage(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-    if (!(req.user as SafeUser).isMember) return res.redirect("/auth/upgrade");
-
     render("create-message", res, req);
   }
 
   async getDeleteConfirmation(req: Request, res: Response, next: NextFunction) {
     const { requestId, ip } = req;
-
-    if (!req.isAuthenticated()) {
-      LOGGER.warn("Unauthenticated delete confirmation attempt", {
-        requestId,
-        ip,
-      });
-      return res.redirect("/auth/login");
-    }
-
-    if (!(req.user as SafeUser).isMember) {
-      LOGGER.warn("Non-member delete confirmation attempt", {
-        requestId,
-        userId: (req.user as SafeUser).id,
-        username: (req.user as SafeUser).username,
-        ip,
-      });
-      return res.redirect("/auth/upgrade");
-    }
-
     const user = req.user as SafeUser;
     const messageId = Number(req.params.id);
 
@@ -202,25 +160,6 @@ class MessageController {
 
   async deleteMessage(req: Request, res: Response, next: NextFunction) {
     const { requestId, ip } = req;
-
-    if (!req.isAuthenticated()) {
-      LOGGER.warn("Unauthenticated message deletion attempt", {
-        requestId,
-        ip,
-      });
-      return res.redirect("/auth/login");
-    }
-
-    if (!(req.user as SafeUser).isMember) {
-      LOGGER.warn("Non-member message deletion attempt", {
-        requestId,
-        userId: (req.user as SafeUser).id,
-        username: (req.user as SafeUser).username,
-        ip,
-      });
-      return res.redirect("/auth/upgrade");
-    }
-
     const user = req.user as SafeUser;
     const messageId = Number(req.params.id);
 

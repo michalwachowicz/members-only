@@ -181,15 +181,11 @@ class AuthController {
   }
 
   async getUpgrade(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
     if ((req.user as SafeUser).isMember) return res.redirect("/");
-
     render("upgrade", res, req);
   }
 
   async upgrade(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
     const user = req.user as SafeUser;
     const { requestId, ip } = req;
 
@@ -229,12 +225,13 @@ class AuthController {
 
       res.redirect("/?success=upgrade");
     } catch (error) {
+      const { message, stack } = error as Error;
       LOGGER.error("Upgrade error", {
         requestId,
         userId: user.id,
         username: user.username,
-        error: (error as Error).message,
-        stack: (error as Error).stack,
+        error: message,
+        stack,
         ip,
       });
 

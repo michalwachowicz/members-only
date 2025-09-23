@@ -11,24 +11,18 @@ import render from "../utils/renderer";
 
 class SettingsController {
   async getSettings(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
     render("settings", res, req, {
       success: req.query.success === "true",
     });
   }
 
   async getPasswordSettings(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
     render("settings-password", res, req, {
       success: req.query.success === "true",
     });
   }
 
   async updatePassword(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
     const { currentPassword, password, confirmPassword } = req.body;
     const user = req.user as SafeUser;
 
@@ -69,13 +63,10 @@ class SettingsController {
   }
 
   async getDeleteConfirmation(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
     render("settings-delete", res, req);
   }
 
   async deleteAccount(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
     const { confirmUsername, confirmPassword } = req.body;
     const user = req.user as SafeUser;
 
@@ -113,8 +104,6 @@ class SettingsController {
   }
 
   async updateProfile(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
     const { username, firstName, lastName } = req.body;
     const user = req.user as SafeUser;
 

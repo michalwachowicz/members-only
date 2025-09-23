@@ -7,10 +7,7 @@ import render from "../utils/renderer";
 
 class UserController {
   async getUser(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
     const authUser = req.user as SafeUser;
-    if (!authUser.isMember) return res.redirect("/auth/upgrade");
 
     const id = req.params.id;
     if (!id || isNaN(Number(id))) {
@@ -19,8 +16,8 @@ class UserController {
         logLevel: LogLevel.Error,
         logContext: {
           requestId: req.requestId,
-          userId: (req.user as SafeUser).id,
-          username: (req.user as SafeUser).username,
+          userId: authUser.id,
+          username: authUser.username,
           ip: req.ip,
         },
       });
@@ -38,8 +35,8 @@ class UserController {
         logLevel: LogLevel.Error,
         logContext: {
           requestId: req.requestId,
-          userId: (req.user as SafeUser).id,
-          username: (req.user as SafeUser).username,
+          userId: authUser.id,
+          username: authUser.username,
           ip: req.ip,
         },
       });
@@ -62,9 +59,6 @@ class UserController {
   }
 
   async getUsers(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
-    if (!(req.user as SafeUser).isMember) return res.redirect("/auth/upgrade");
-
     const users = await UserService.getSafeUsers();
     render("users", res, req, { users });
   }
