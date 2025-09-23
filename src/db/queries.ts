@@ -7,6 +7,7 @@ async function createTableIfNotExists(
   createTableQuery: string
 ): Promise<void> {
   try {
+    const start = Date.now();
     const result = await pool.query(
       `
         SELECT EXISTS (
@@ -21,10 +22,22 @@ async function createTableIfNotExists(
 
     if (!tableExists) {
       await pool.query(createTableQuery);
-      LOGGER.info(`${capitalize(tableName)} table created successfully!`);
+      const duration = Date.now() - start;
+      LOGGER.info(`${capitalize(tableName)} table created successfully!`, {
+        tableName,
+        duration,
+      });
+    } else {
+      LOGGER.debug(`${capitalize(tableName)} table already exists`, {
+        tableName,
+      });
     }
   } catch (error) {
-    LOGGER.error(`Failed to create ${tableName} table: ${error}`);
+    LOGGER.error(`Failed to create ${tableName} table`, {
+      tableName,
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+    });
     throw error;
   }
 }
@@ -78,14 +91,26 @@ async function createMessageTable(): Promise<void> {
 }
 
 export async function initDatabase(): Promise<void> {
+  const start = Date.now();
+
   try {
+    LOGGER.info("Starting database initialization");
+
     await createUserTable();
     await createMessageTable();
     await createSessionTable();
 
-    LOGGER.info("Database initialized successfully!");
+    const duration = Date.now() - start;
+    LOGGER.info("Database initialized successfully!", {
+      duration,
+    });
   } catch (error) {
-    LOGGER.error(`Database initialization failed: ${error}`);
+    const duration = Date.now() - start;
+    LOGGER.error("Database initialization failed", {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+      duration,
+    });
     throw error;
   }
 }

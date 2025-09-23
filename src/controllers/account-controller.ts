@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { MessageService, UserService } from "../services";
 import { SafeUser, User } from "../types/user";
+import { LOGGER } from "../utils/logger";
 
 class AccountController {
   async getAccount(req: Request, res: Response) {
@@ -24,34 +25,129 @@ class AccountController {
   }
 
   async updateAccount(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
+    const { requestId, ip } = req;
+
+    if (!req.isAuthenticated()) {
+      LOGGER.warn("Unauthenticated account update attempt", {
+        requestId,
+        ip,
+      });
+      return res.redirect("/auth/login");
+    }
 
     const user = req.user as User;
     const { username, firstName, lastName, password } = req.body;
 
-    user.username = username;
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.password = password;
+    LOGGER.info("Account update attempt", {
+      requestId,
+      userId: user.id,
+      username: user.username,
+      newUsername: username,
+      newFirstName: firstName,
+      newLastName: lastName,
+      ip,
+    });
 
-    await UserService.updateUser(user.id, user);
+    try {
+      user.username = username;
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.password = password;
 
-    res.redirect("/account");
+      await UserService.updateUser(user.id, user);
+
+      LOGGER.info("Account updated successfully", {
+        requestId,
+        userId: user.id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        ip,
+      });
+
+      res.redirect("/account");
+    } catch (error) {
+      LOGGER.error("Account update error", {
+        requestId,
+        userId: user.id,
+        username: user.username,
+        error: (error as Error).message,
+        stack: (error as Error).stack,
+        ip,
+      });
+
+      res.render("error", {
+        title: "Account Update Error",
+        message: "An error occurred while updating your account",
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
+      });
+    }
   }
 
   async deleteAccount(req: Request, res: Response) {
-    if (!req.isAuthenticated()) return res.redirect("/auth/login");
+    const { requestId, ip } = req;
+
+    if (!req.isAuthenticated()) {
+      LOGGER.warn("Unauthenticated account deletion attempt", {
+        requestId,
+        ip,
+      });
+      return res.redirect("/auth/login");
+    }
+
+    const user = req.user as User;
+
+    LOGGER.info("Account deletion attempt", {
+      requestId,
+      userId: user.id,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      ip,
+    });
 
     try {
-      const user = req.user as User;
       await UserService.deleteUser(user.id);
 
+      LOGGER.info("Account deleted successfully", {
+        requestId,
+        userId: user.id,
+        username: user.username,
+        ip,
+      });
+
       req.logout((err) => {
-        if (err) return res.redirect("/auth/login");
+        if (err) {
+          LOGGER.error("Logout error during account deletion", {
+            requestId,
+            userId: user.id,
+            username: user.username,
+            error: err.message,
+            ip,
+          });
+          return res.redirect("/auth/login");
+        }
+
+        LOGGER.info("User logged out after account deletion", {
+          requestId,
+          userId: user.id,
+          username: user.username,
+          ip,
+        });
       });
 
       res.redirect("/auth/login");
     } catch (err) {
+      LOGGER.error("Account deletion error", {
+        requestId,
+        userId: user.id,
+        username: user.username,
+        error: (err as Error).message,
+        stack: (err as Error).stack,
+        ip,
+      });
+
       res.render("error", {
         title: "Account Deletion Error",
         message: (err as Error).message,

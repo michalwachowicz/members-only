@@ -23,10 +23,29 @@ initializeMiddlewares(app);
 initializeRoutes(app);
 
 app.get("/", async (req, res) => {
+  const { requestId, ip } = req;
+
   try {
     const user = req.user as SafeUser;
     const isMember = user ? user.isMember : false;
+
+    LOGGER.info("Home page request", {
+      requestId,
+      userId: user?.id,
+      username: user?.username,
+      isMember,
+      ip,
+    });
+
     const messages = await MessageService.getMessages(isMember);
+
+    LOGGER.info("Messages fetched successfully", {
+      requestId,
+      userId: user?.id,
+      messageCount: messages.length,
+      isMember,
+      ip,
+    });
 
     res.render("index", {
       user: req.user,
@@ -38,7 +57,15 @@ app.get("/", async (req, res) => {
       success: req.query.success || undefined,
     });
   } catch (error) {
-    console.error("Error fetching messages:", error);
+    LOGGER.error("Error fetching messages", {
+      requestId,
+      userId: (req.user as SafeUser)?.id,
+      username: (req.user as SafeUser)?.username,
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+      ip,
+    });
+
     res.render("index", {
       user: req.user,
       messages: [],
@@ -48,9 +75,39 @@ app.get("/", async (req, res) => {
 });
 
 app.use((req, res) => {
+  LOGGER.warn("404 Not Found", {
+    requestId: req.requestId,
+    method: req.method,
+    url: req.url,
+    userId: (req.user as SafeUser)?.id,
+    username: (req.user as SafeUser)?.username,
+    ip: req.ip,
+    userAgent: req.get("User-Agent"),
+  });
+
   res.status(404).render("error", {
     title: "Page Not Found",
     message: "The page you're looking for doesn't exist.",
+    user: req.user,
+    isAuthenticated: req.isAuthenticated(),
+  });
+});
+
+app.use((error: Error, req: any, res: any, next: any) => {
+  LOGGER.error("Unhandled error", {
+    requestId: req.requestId,
+    method: req.method,
+    url: req.url,
+    userId: (req.user as SafeUser)?.id,
+    username: (req.user as SafeUser)?.username,
+    ip: req.ip,
+    error: error.message,
+    stack: error.stack,
+  });
+
+  res.status(500).render("error", {
+    title: "Internal Server Error",
+    message: "An unexpected error occurred. Please try again later.",
     user: req.user,
     isAuthenticated: req.isAuthenticated(),
   });

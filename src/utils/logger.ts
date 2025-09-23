@@ -5,29 +5,70 @@ enum LogLevel {
   Debug = "debug",
 }
 
-function log(level: LogLevel, message: string) {
+interface LogContext {
+  userId?: number;
+  requestId?: string;
+  ip?: string;
+  userAgent?: string;
+  method?: string;
+  url?: string;
+  statusCode?: number;
+  duration?: number;
+  error?: string;
+  stack?: string;
+  [key: string]: any;
+}
+
+function formatLogEntry(
+  level: LogLevel,
+  message: string,
+  context?: LogContext
+): string {
   const timestamp = new Date().toISOString();
+  const logEntry = {
+    timestamp,
+    level,
+    message,
+    service: "members-only",
+    ...context,
+  };
+
+  if (process.env.NODE_ENV === "development") {
+    const contextStr = context ? ` | ${JSON.stringify(context)}` : "";
+    return `[${level.toUpperCase()}] [${timestamp}]: ${message}${contextStr}`;
+  }
+
+  return JSON.stringify(logEntry);
+}
+
+function log(level: LogLevel, message: string, context?: LogContext) {
+  const formattedLog = formatLogEntry(level, message, context);
+
   switch (level) {
     case LogLevel.Info:
-      console.info(`[INFO] [${timestamp}]: ${message}`);
+      console.info(formattedLog);
       break;
     case LogLevel.Warn:
-      console.warn(`[WARN] [${timestamp}]: ${message}`);
+      console.warn(formattedLog);
       break;
     case LogLevel.Error:
-      console.error(`[ERROR] [${timestamp}]: ${message}`);
+      console.error(formattedLog);
       break;
     case LogLevel.Debug:
-      console.debug(`[DEBUG] [${timestamp}]: ${message}`);
+      console.debug(formattedLog);
       break;
     default:
-      console.log(`[LOG] [${timestamp}]: ${message}`);
+      console.log(formattedLog);
   }
 }
 
 export const LOGGER = {
-  info: (message: string) => log(LogLevel.Info, message),
-  warn: (message: string) => log(LogLevel.Warn, message),
-  error: (message: string) => log(LogLevel.Error, message),
-  debug: (message: string) => log(LogLevel.Debug, message),
+  info: (message: string, context?: LogContext) =>
+    log(LogLevel.Info, message, context),
+  warn: (message: string, context?: LogContext) =>
+    log(LogLevel.Warn, message, context),
+  error: (message: string, context?: LogContext) =>
+    log(LogLevel.Error, message, context),
+  debug: (message: string, context?: LogContext) =>
+    log(LogLevel.Debug, message, context),
 };
