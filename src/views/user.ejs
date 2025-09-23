@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= user.username %> | membersonly</title>
+  <title><%= visitedUser.username %> | membersonly</title>
   <%- include("partials/styles") %>
 </head>
 <body>
   <%- include("partials/header") %>
 
   <main class="main">
-    <h1 class="main__title"><%= user.firstName %> <%= user.lastName %> (<%= user.username %>)</h1>
+    <h1 class="main__title"><%= visitedUser.firstName %> <%= visitedUser.lastName %> (<%= visitedUser.username %>)</h1>
 
     <div class="user__info">
-      <span>Membership Status:</span> <%= user.isAdmin ? "Admin" : user.isMember ? "Member" : "Not Member" %>
+      <span>Membership Status:</span> <%= visitedUser.isAdmin ? "Admin" : visitedUser.isMember ? "Member" : "Not Member" %>
     </div>
 
     <div class="user__info">
-      <span>Date Joined:</span> <%= new Date(user.createdAt).toLocaleString() %>
+      <span>Date Joined:</span> <%= new Date(visitedUser.createdAt).toLocaleString() %>
     </div>
 
     <%- include("partials/messages", { showAuthor: false, className: "messages--user" }) %>

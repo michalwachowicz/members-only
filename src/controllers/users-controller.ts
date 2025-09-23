@@ -50,7 +50,7 @@ class UserController {
     const canDelete = authUser.id === user.id || authUser.isAdmin;
 
     render("user", res, req, {
-      user,
+      visitedUser: user,
       messages: messages.map((message) => ({
         ...message,
         canDelete,
