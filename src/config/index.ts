@@ -12,5 +12,12 @@ export const config = {
     username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,
     tls: process.env.REDIS_TLS === "true",
+    ttl: {
+      user: Number(process.env.REDIS_TTL_USER || 300),
+      userSafe: Number(process.env.REDIS_TTL_USER_SAFE || 300),
+      usersSafeAll: Number(process.env.REDIS_TTL_USERS_SAFE_ALL || 60),
+      messagesList: Number(process.env.REDIS_TTL_MESSAGES_LIST || 30),
+      messagesByUser: Number(process.env.REDIS_TTL_MESSAGES_BY_USER || 30),
+    },
   },
 };

@@ -1,6 +1,9 @@
 import bcrypt from "bcrypt";
 import pool from "../db/pool";
 import type { User, UserRegister, SafeUser } from "../types/user";
+import { getRedisClient } from "../redis";
+import { LOGGER } from "../utils/logger";
+import { config } from "../config";
 
 interface DbUserRow {
   id: number;
@@ -28,24 +31,77 @@ class UserService {
   }
 
   async getUserByUsername(username: string): Promise<User | null> {
+    const redis = getRedisClient();
+    const cacheKey = `user:byUsername:${username}`;
+
+    if (redis) {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        LOGGER.info("UserService.getUserByUsername cache hit", { username });
+        return JSON.parse(cached) as User;
+      }
+    }
+
     const result = await pool.query("SELECT * FROM users WHERE username = $1", [
       username,
     ]);
     const dbRow = result.rows[0] as DbUserRow | undefined;
-    return dbRow ? this.adaptDbRowToUser(dbRow) : null;
+    const user = dbRow ? this.adaptDbRowToUser(dbRow) : null;
+    LOGGER.info("UserService.getUserByUsername fetched from db", { username });
+
+    if (redis && user)
+      await redis.set(cacheKey, JSON.stringify(user), {
+        EX: config.redis.ttl.user,
+      });
+    return user;
   }
 
   async getUserById(id: number): Promise<User | null> {
+    const redis = getRedisClient();
+    const cacheKey = `user:${id}`;
+
+    if (redis) {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        LOGGER.info("UserService.getUserById cache hit", { id });
+        return JSON.parse(cached) as User;
+      }
+    }
+
     const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
     const dbRow = result.rows[0] as DbUserRow | undefined;
-    return dbRow ? this.adaptDbRowToUser(dbRow) : null;
+    const user = dbRow ? this.adaptDbRowToUser(dbRow) : null;
+    LOGGER.info("UserService.getUserById fetched from db", { id });
+
+    if (redis && user)
+      await redis.set(cacheKey, JSON.stringify(user), {
+        EX: config.redis.ttl.user,
+      });
+    return user;
   }
 
   async getSafeUserById(id: number): Promise<SafeUser | null> {
+    const redis = getRedisClient();
+    const cacheKey = `user:safe:${id}`;
+
+    if (redis) {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        LOGGER.info("UserService.getSafeUserById cache hit", { id });
+        return JSON.parse(cached) as SafeUser;
+      }
+    }
+
     const user = await this.getUserById(id);
     if (!user) return null;
 
     const { password, ...safeUser } = user;
+    LOGGER.info("UserService.getSafeUserById fetched from db", { id });
+
+    if (redis)
+      await redis.set(cacheKey, JSON.stringify(safeUser), {
+        EX: config.redis.ttl.userSafe,
+      });
     return safeUser;
   }
 
@@ -60,10 +116,30 @@ class UserService {
       [username, hashedPassword, firstName, lastName, false, false]
     );
     const dbRow = result.rows[0] as DbUserRow;
-    return this.adaptDbRowToUser(dbRow);
+    const created = this.adaptDbRowToUser(dbRow);
+
+    const redis = getRedisClient();
+    if (redis) {
+      await Promise.all([
+        redis.del(`user:byUsername:${created.username}`),
+        redis.del(`user:${created.id}`),
+        redis.del(`user:safe:${created.id}`),
+        redis.del("users:safe:all"),
+      ]);
+    }
+
+    return created;
   }
 
   async updateUser(id: number, user: Partial<User>): Promise<User> {
+    const redis = getRedisClient();
+
+    let oldUsername: string | undefined;
+    if (user.username !== undefined) {
+      const existing = await this.getUserById(id);
+      oldUsername = existing?.username;
+    }
+
     const updateFields: string[] = [];
     const values: any[] = [];
     let paramCount = 1;
@@ -117,21 +193,65 @@ class UserService {
 
     const result = await pool.query(query, values);
     const dbRow = result.rows[0] as DbUserRow;
-    return this.adaptDbRowToUser(dbRow);
+    const updated = this.adaptDbRowToUser(dbRow);
+
+    if (redis) {
+      const keysToDelete = [`user:${id}`, `user:safe:${id}`, "users:safe:all"];
+
+      if (oldUsername) keysToDelete.push(`user:byUsername:${oldUsername}`);
+      if (updated.username)
+        keysToDelete.push(`user:byUsername:${updated.username}`);
+
+      await redis.del(keysToDelete);
+    }
+
+    return updated;
   }
 
   async deleteUser(id: number): Promise<void> {
+    const redis = getRedisClient();
+    let usernameForInvalidation: string | undefined;
+    if (redis) {
+      const existing = await this.getUserById(id);
+      usernameForInvalidation = existing?.username;
+    }
+
     await pool.query("DELETE FROM users WHERE id = $1", [id]);
+
+    if (redis) {
+      const keysToDelete = [`user:${id}`, `user:safe:${id}`, "users:safe:all"];
+      if (usernameForInvalidation)
+        keysToDelete.push(`user:byUsername:${usernameForInvalidation}`);
+      await redis.del(keysToDelete);
+    }
   }
 
   async getSafeUsers(): Promise<SafeUser[]> {
+    const redis = getRedisClient();
+    const cacheKey = "users:safe:all";
+
+    if (redis) {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        LOGGER.info("UserService.getSafeUsers cache hit");
+        return JSON.parse(cached) as SafeUser[];
+      }
+    }
+
     const result = await pool.query("SELECT * FROM users");
-    return result.rows
+    const users = result.rows
       .map((row) => this.adaptDbRowToUser(row))
       .map((user) => {
         const { password, ...safeUser } = user;
         return safeUser;
       });
+    LOGGER.info("UserService.getSafeUsers fetched from db");
+
+    if (redis)
+      await redis.set(cacheKey, JSON.stringify(users), {
+        EX: config.redis.ttl.usersSafeAll,
+      });
+    return users;
   }
 }
 
