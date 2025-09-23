@@ -32,7 +32,7 @@ class AuthController {
       const existingUser = await UserService.getUserByUsername(username);
 
       if (existingUser) {
-        errors.push("Username: Username already exists");
+        errors.push("Username already exists");
         LOGGER.warn("Registration failed - username already exists", {
           requestId,
           username,
