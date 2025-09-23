@@ -1,3 +1,4 @@
+import "./types/express";
 import path from "path";
 import express from "express";
 import { LOGGER } from "./utils/logger";

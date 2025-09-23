@@ -2,7 +2,11 @@ import passport from "passport";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { AuthService, UserService } from "../services";
-import { LoginSchema, RegisterSchema } from "../validations/auth-validation";
+import {
+  LoginSchema,
+  RegisterInput,
+  RegisterSchema,
+} from "../validations/auth-validation";
 import { formatZodErrors } from "../utils/zod-formatter";
 import { SafeUser } from "../types/user";
 import { LOGGER } from "../utils/logger";
@@ -11,7 +15,8 @@ import render from "../utils/renderer";
 
 class AuthController {
   async register(req: Request, res: Response) {
-    const { username, firstName, lastName } = req.body;
+    const { username, firstName, lastName, password } =
+      (req.validatedBody as RegisterInput) ?? req.body;
     const { ip, requestId } = req;
 
     try {
@@ -35,13 +40,12 @@ class AuthController {
         });
       }
 
-      const parseResult = RegisterSchema.safeParse(req.body);
-      if (!parseResult.success) {
-        errors.push(...formatZodErrors(parseResult.error));
+      if (req.validationErrors && req.validationErrors.length > 0) {
+        errors.push(...req.validationErrors);
         LOGGER.warn("Registration failed - validation error", {
           requestId,
           username,
-          errors: formatZodErrors(parseResult.error),
+          errors,
           ip,
         });
       }
@@ -53,7 +57,6 @@ class AuthController {
         });
       }
 
-      const { password } = parseResult.data!;
       const newUser = await UserService.createUser({
         username,
         password,
@@ -98,7 +101,6 @@ class AuthController {
         ip,
       });
 
-      LoginSchema.parse(req.body);
       passport.authenticate("local", (err: any, user: any, info: any) => {
         if (err) {
           LOGGER.error("Login error", {
@@ -159,12 +161,12 @@ class AuthController {
       LOGGER.warn("Login validation error", {
         requestId,
         username,
-        errors: formatZodErrors(error as ZodError),
+        errors: req.validationErrors || formatZodErrors(error as ZodError),
         ip,
       });
 
       render("login", res, undefined, {
-        errors: formatZodErrors(error as ZodError),
+        errors: req.validationErrors || formatZodErrors(error as ZodError),
         formData: req.body,
       });
     }

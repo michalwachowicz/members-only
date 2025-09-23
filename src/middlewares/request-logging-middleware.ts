@@ -2,14 +2,6 @@ import { Request, Response, NextFunction, Express } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { LOGGER } from "../utils/logger";
 
-declare global {
-  namespace Express {
-    interface Request {
-      requestId?: string;
-    }
-  }
-}
-
 export default function initializeRequestLogging(app: Express) {
   app.use((req: Request, res: Response, next: NextFunction) => {
     const start = Date.now();
