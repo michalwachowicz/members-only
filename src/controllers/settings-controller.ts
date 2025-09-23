@@ -7,15 +7,13 @@ import {
   ProfileChangeSchema,
 } from "../validations/settings-validation";
 import { formatZodErrors } from "../utils/zod-formatter";
+import render from "../utils/renderer";
 
 class SettingsController {
   async getSettings(req: Request, res: Response) {
     if (!req.isAuthenticated()) return res.redirect("/auth/login");
 
-    const user = req.user as SafeUser;
-    res.render("settings", {
-      user,
-      isAuthenticated: req.isAuthenticated(),
+    render("settings", res, req, {
       success: req.query.success === "true",
     });
   }
@@ -23,10 +21,7 @@ class SettingsController {
   async getPasswordSettings(req: Request, res: Response) {
     if (!req.isAuthenticated()) return res.redirect("/auth/login");
 
-    const user = req.user as SafeUser;
-    res.render("settings-password", {
-      user,
-      isAuthenticated: req.isAuthenticated(),
+    render("settings-password", res, req, {
       success: req.query.success === "true",
     });
   }
@@ -54,9 +49,7 @@ class SettingsController {
       }
 
       if (errors.length > 0) {
-        return res.render("settings-password", {
-          user,
-          isAuthenticated: req.isAuthenticated(),
+        return render("settings-password", res, req, {
           success: false,
           errors,
         });
@@ -66,9 +59,7 @@ class SettingsController {
 
       res.redirect("/settings?success=true");
     } catch (error) {
-      res.render("settings-password", {
-        user,
-        isAuthenticated: req.isAuthenticated(),
+      render("settings-password", res, req, {
         success: false,
         errors: [
           error instanceof Error ? error.message : "Failed to update password",
@@ -79,12 +70,7 @@ class SettingsController {
 
   async getDeleteConfirmation(req: Request, res: Response) {
     if (!req.isAuthenticated()) return res.redirect("/auth/login");
-
-    const user = req.user as SafeUser;
-    res.render("settings-delete", {
-      user,
-      isAuthenticated: req.isAuthenticated(),
-    });
+    render("settings-delete", res, req);
   }
 
   async deleteAccount(req: Request, res: Response) {
@@ -106,9 +92,7 @@ class SettingsController {
       }
 
       if (errors.length > 0) {
-        return res.render("settings-delete", {
-          user,
-          isAuthenticated: req.isAuthenticated(),
+        return render("settings-delete", res, req, {
           errors,
         });
       }
@@ -120,9 +104,7 @@ class SettingsController {
         res.redirect("/?success=delete");
       });
     } catch (error) {
-      res.render("settings-delete", {
-        user,
-        isAuthenticated: req.isAuthenticated(),
+      render("settings-delete", res, req, {
         errors: [
           error instanceof Error ? error.message : "Failed to delete account",
         ],
@@ -156,9 +138,7 @@ class SettingsController {
       if (error) errors.push(...formatZodErrors(error));
 
       if (errors.length > 0) {
-        return res.render("settings", {
-          user,
-          isAuthenticated: req.isAuthenticated(),
+        return render("settings", res, req, {
           success: false,
           errors,
         });
@@ -173,9 +153,7 @@ class SettingsController {
 
       res.redirect("/settings?success=true");
     } catch (error) {
-      res.render("settings", {
-        user,
-        isAuthenticated: req.isAuthenticated(),
+      render("settings", res, req, {
         success: false,
         errors: [
           error instanceof Error ? error.message : "Failed to update profile",

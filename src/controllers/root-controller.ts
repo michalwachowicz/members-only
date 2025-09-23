@@ -4,6 +4,7 @@ import { LOGGER } from "../utils/logger";
 import MessageService from "../services/message-service";
 import { AppError } from "../error/AppError";
 import { LogLevel } from "../utils/logger";
+import render from "../utils/renderer";
 
 class RootController {
   async getHome(req: Request, res: Response) {
@@ -31,13 +32,11 @@ class RootController {
         ip,
       });
 
-      res.render("index", {
-        user: req.user,
+      render("index", res, req, {
         messages: messages.map((message) => ({
           ...message,
           canDelete: user ? user.id === message.userId || user.isAdmin : false,
         })),
-        isAuthenticated: req.isAuthenticated(),
         success: req.query.success || undefined,
       });
     } catch (error) {

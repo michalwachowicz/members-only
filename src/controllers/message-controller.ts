@@ -6,6 +6,7 @@ import { MessageSchema } from "../validations/message-validation";
 import { formatZodErrors } from "../utils/zod-formatter";
 import { LOGGER, LogLevel } from "../utils/logger";
 import { AppError } from "../error/AppError";
+import render from "../utils/renderer";
 
 class MessageController {
   async createMessage(req: Request, res: Response) {
@@ -45,12 +46,9 @@ class MessageController {
           ip,
         });
 
-        res.render("create-message", {
+        return render("create-message", res, req, {
           errors: formatZodErrors(error),
-          user: req.user,
-          isAuthenticated: req.isAuthenticated(),
         });
-        return;
       }
 
       const userId = user.id;
@@ -87,14 +85,12 @@ class MessageController {
         ip,
       });
 
-      res.render("create-message", {
+      render("create-message", res, req, {
         errors: [
           error instanceof Error
             ? error.message
             : "An unexpected error occurred. Please try again.",
         ],
-        user: req.user,
-        isAuthenticated: req.isAuthenticated(),
       });
     }
   }
@@ -103,10 +99,7 @@ class MessageController {
     if (!req.isAuthenticated()) return res.redirect("/auth/login");
     if (!(req.user as SafeUser).isMember) return res.redirect("/auth/upgrade");
 
-    res.render("create-message", {
-      user: req.user,
-      isAuthenticated: req.isAuthenticated(),
-    });
+    render("create-message", res, req);
   }
 
   async getDeleteConfirmation(req: Request, res: Response, next: NextFunction) {
@@ -180,10 +173,8 @@ class MessageController {
         );
       }
 
-      res.render("delete-message", {
+      render("delete-message", res, req, {
         message,
-        user: req.user,
-        isAuthenticated: req.isAuthenticated(),
       });
     } catch (error) {
       if (error instanceof AppError) {

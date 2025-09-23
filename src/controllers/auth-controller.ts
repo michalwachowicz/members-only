@@ -7,6 +7,7 @@ import { formatZodErrors } from "../utils/zod-formatter";
 import { SafeUser } from "../types/user";
 import { LOGGER } from "../utils/logger";
 import { AppError } from "../error/AppError";
+import render from "../utils/renderer";
 
 class AuthController {
   async register(req: Request, res: Response) {
@@ -46,11 +47,9 @@ class AuthController {
       }
 
       if (errors.length > 0) {
-        return res.render("register", {
+        return render("register", res, undefined, {
           errors,
           formData: req.body,
-          isAuthenticated: false,
-          user: null,
         });
       }
 
@@ -81,11 +80,9 @@ class AuthController {
         ip,
       });
 
-      res.render("register", {
+      render("register", res, req, {
         errors: ["An unexpected error occurred. Please try again."],
         formData: req.body,
-        isAuthenticated: false,
-        user: null,
       });
     }
   }
@@ -112,11 +109,9 @@ class AuthController {
             ip,
           });
 
-          return res.render("login", {
+          return render("login", res, undefined, {
             errors: ["An error occurred during login. Please try again."],
             formData: req.body,
-            isAuthenticated: false,
-            user: null,
           });
         }
         if (!user) {
@@ -127,11 +122,9 @@ class AuthController {
             ip,
           });
 
-          return res.render("login", {
+          return render("login", res, undefined, {
             errors: [info?.message || "Invalid username or password."],
             formData: req.body,
-            isAuthenticated: false,
-            user: null,
           });
         }
         req.logIn(user, (err) => {
@@ -144,11 +137,9 @@ class AuthController {
               ip,
             });
 
-            return res.render("login", {
+            return render("login", res, undefined, {
               errors: ["An error occurred during login. Please try again."],
               formData: req.body,
-              isAuthenticated: false,
-              user: null,
             });
           }
 
@@ -172,10 +163,8 @@ class AuthController {
         ip,
       });
 
-      res.render("login", {
+      render("login", res, undefined, {
         errors: formatZodErrors(error as ZodError),
-        isAuthenticated: false,
-        user: null,
         formData: req.body,
       });
     }
@@ -183,30 +172,19 @@ class AuthController {
 
   async getLogin(req: Request, res: Response) {
     if (req.isAuthenticated()) return res.redirect("/");
-
-    res.render("login", {
-      isAuthenticated: false,
-      user: null,
-    });
+    render("login", res);
   }
 
   async getRegister(req: Request, res: Response) {
     if (req.isAuthenticated()) return res.redirect("/");
-
-    res.render("register", {
-      isAuthenticated: false,
-      user: null,
-    });
+    render("register", res);
   }
 
   async getUpgrade(req: Request, res: Response) {
     if (!req.isAuthenticated()) return res.redirect("/auth/login");
     if ((req.user as SafeUser).isMember) return res.redirect("/");
 
-    res.render("upgrade", {
-      user: req.user,
-      isAuthenticated: req.isAuthenticated(),
-    });
+    render("upgrade", res, req);
   }
 
   async upgrade(req: Request, res: Response) {
@@ -234,10 +212,8 @@ class AuthController {
         ip,
       });
 
-      return res.render("upgrade", {
+      return render("upgrade", res, req, {
         errors: ["Invalid answer."],
-        isAuthenticated: req.isAuthenticated(),
-        user: req.user,
       });
     }
 
@@ -262,10 +238,8 @@ class AuthController {
         ip,
       });
 
-      res.render("upgrade", {
+      render("upgrade", res, req, {
         errors: ["An error occurred during upgrade. Please try again."],
-        isAuthenticated: req.isAuthenticated(),
-        user: req.user,
       });
     }
   }

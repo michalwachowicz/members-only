@@ -2,6 +2,7 @@ import { Express, Request, Response, NextFunction } from "express";
 import { log, LOGGER, LogLevel } from "../utils/logger";
 import { SafeUser } from "../types/user";
 import { AppError } from "../error/AppError";
+import render from "../utils/renderer";
 
 export default function initializeErrorMiddleware(app: Express) {
   app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
@@ -27,21 +28,19 @@ export default function initializeErrorMiddleware(app: Express) {
       log(level, title, context);
 
       const status = error.statusCode || 500;
-      return res.status(status).render("error", {
+      return render("error", res, req, {
         title: error.title || "Error",
         message: error.message,
-        user: req.user,
-        isAuthenticated: req.isAuthenticated(),
+        status,
       });
     }
 
     LOGGER.error("Unhandled error", baseContext);
 
-    return res.status(500).render("error", {
+    return render("error", res, req, {
       title: "Internal Server Error",
       message: "An unexpected error occurred. Please try again later.",
-      user: req.user,
-      isAuthenticated: req.isAuthenticated(),
+      status: 500,
     });
   });
 }
