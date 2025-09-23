@@ -4,6 +4,7 @@ type AppErrorOptions = {
   logTitle?: string;
   logLevel?: LogLevel;
   logContext?: LogContext;
+  statusCode?: number;
 };
 
 export class AppError extends Error {
@@ -11,6 +12,7 @@ export class AppError extends Error {
   logTitle?: string;
   logLevel?: LogLevel;
   logContext?: LogContext;
+  statusCode?: number;
 
   constructor(title: string, message: string, options?: AppErrorOptions) {
     super(message);
@@ -19,5 +21,6 @@ export class AppError extends Error {
     this.logTitle = options?.logTitle;
     this.logLevel = options?.logLevel;
     this.logContext = options?.logContext;
+    this.statusCode = options?.statusCode;
   }
 }

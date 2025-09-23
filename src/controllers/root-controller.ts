@@ -48,6 +48,7 @@ class RootController {
       throw new AppError("Database Error", "Failed to load home page", {
         logTitle: "Home page load failed",
         logLevel: LogLevel.Error,
+        statusCode: 500,
         logContext: {
           requestId,
           userId: (req.user as SafeUser)?.id,

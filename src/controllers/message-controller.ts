@@ -148,6 +148,7 @@ class MessageController {
         throw new AppError("Not Found", "Message not found", {
           logTitle: "Message not found for deletion",
           logLevel: LogLevel.Warn,
+          statusCode: 404,
           logContext: {
             requestId,
             userId: user.id,
@@ -165,6 +166,7 @@ class MessageController {
           {
             logTitle: "Unauthorized delete attempt",
             logLevel: LogLevel.Warn,
+            statusCode: 403,
             logContext: {
               requestId,
               userId: user.id,
@@ -191,6 +193,7 @@ class MessageController {
           new AppError("Error", "An error occurred while loading the message", {
             logTitle: "Delete Confirmation Error",
             logLevel: LogLevel.Error,
+            statusCode: 500,
             logContext: {
               requestId,
               userId: user.id,
@@ -245,6 +248,7 @@ class MessageController {
         throw new AppError("Not Found", "Message not found", {
           logTitle: "Message not found for deletion",
           logLevel: LogLevel.Warn,
+          statusCode: 404,
           logContext: {
             requestId,
             userId: user.id,
@@ -262,6 +266,7 @@ class MessageController {
           {
             logTitle: "Unauthorized delete attempt",
             logLevel: LogLevel.Warn,
+            statusCode: 403,
             logContext: {
               requestId,
               userId: user.id,
@@ -300,6 +305,7 @@ class MessageController {
             {
               logTitle: "Message Deletion Error",
               logLevel: LogLevel.Error,
+              statusCode: 500,
               logContext: {
                 requestId,
                 userId: user.id,

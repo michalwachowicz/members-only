@@ -26,18 +26,13 @@ export default function initializeErrorMiddleware(app: Express) {
 
       log(level, title, context);
 
-      return res
-        .status(
-          "statusCode" in context && context.statusCode
-            ? context.statusCode
-            : 500
-        )
-        .render("error", {
-          title: error.title || "Error",
-          message: error.message,
-          user: req.user,
-          isAuthenticated: req.isAuthenticated(),
-        });
+      const status = error.statusCode || 500;
+      return res.status(status).render("error", {
+        title: error.title || "Error",
+        message: error.message,
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
+      });
     }
 
     LOGGER.error("Unhandled error", baseContext);

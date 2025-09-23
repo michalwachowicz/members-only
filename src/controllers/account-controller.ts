@@ -73,6 +73,7 @@ class AccountController {
           "Account Update Error",
           "An error occurred while updating your account",
           {
+            statusCode: 500,
             logContext: {
               requestId,
               userId: user.id,
@@ -146,6 +147,7 @@ class AccountController {
           "Account Deletion Error",
           "An error occurred while deleting your account",
           {
+            statusCode: 500,
             logContext: {
               requestId,
               userId: user.id,
