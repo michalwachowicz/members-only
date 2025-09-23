@@ -1,6 +1,7 @@
 import path from "path";
 import express from "express";
 import { LOGGER } from "./utils/logger";
+import { initRedis } from "./redis";
 import { initDatabase } from "./db/queries";
 import {
   initializeMiddlewares,
@@ -26,6 +27,7 @@ initializeErrorMiddleware(app);
 
 app.listen(PORT, async () => {
   LOGGER.info(`Server is running on http://localhost:${PORT}`);
+  await initRedis();
   await initDatabase();
 });
 
