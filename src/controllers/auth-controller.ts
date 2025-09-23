@@ -6,6 +6,7 @@ import { LoginSchema, RegisterSchema } from "../validations/auth-validation";
 import { formatZodErrors } from "../utils/zod-formatter";
 import { SafeUser } from "../types/user";
 import { LOGGER } from "../utils/logger";
+import { AppError } from "../error/AppError";
 
 class AuthController {
   async register(req: Request, res: Response) {
@@ -269,7 +270,7 @@ class AuthController {
     }
   }
 
-  async logout(req: Request, res: Response) {
+  async logout(req: Request, res: Response, next: NextFunction) {
     const user = req.user as SafeUser;
     const { requestId, ip } = req;
 
@@ -282,20 +283,17 @@ class AuthController {
 
     req.logout((err) => {
       if (err) {
-        LOGGER.error("Logout error", {
-          requestId,
-          userId: user?.id,
-          username: user?.username,
-          error: err.message,
-          ip,
-        });
-
-        return res.render("error", {
-          title: "Logout Error",
-          message: (err as Error).message,
-          user: req.user,
-          isAuthenticated: req.isAuthenticated(),
-        });
+        next(
+          new AppError("Logout Error", (err as Error).message, {
+            logContext: {
+              requestId,
+              userId: user?.id,
+              username: user?.username,
+              error: err.message,
+              ip,
+            },
+          })
+        );
       }
 
       LOGGER.info("User logged out successfully", {

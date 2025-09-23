@@ -8,3 +8,5 @@ export const initializeMiddlewares = (app: Express) => {
   initializeSession(app);
   initializePassport(app);
 };
+
+export { default as initializeErrorMiddleware } from "./error-middleware";

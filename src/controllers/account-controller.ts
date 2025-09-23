@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { MessageService, UserService } from "../services";
 import { SafeUser, User } from "../types/user";
 import { LOGGER } from "../utils/logger";
+import { AppError } from "../error/AppError";
 
 class AccountController {
   async getAccount(req: Request, res: Response) {
@@ -24,7 +25,7 @@ class AccountController {
     });
   }
 
-  async updateAccount(req: Request, res: Response) {
+  async updateAccount(req: Request, res: Response, next: NextFunction) {
     const { requestId, ip } = req;
 
     if (!req.isAuthenticated()) {
@@ -67,25 +68,26 @@ class AccountController {
 
       res.redirect("/account");
     } catch (error) {
-      LOGGER.error("Account update error", {
-        requestId,
-        userId: user.id,
-        username: user.username,
-        error: (error as Error).message,
-        stack: (error as Error).stack,
-        ip,
-      });
-
-      res.render("error", {
-        title: "Account Update Error",
-        message: "An error occurred while updating your account",
-        user: req.user,
-        isAuthenticated: req.isAuthenticated(),
-      });
+      next(
+        new AppError(
+          "Account Update Error",
+          "An error occurred while updating your account",
+          {
+            logContext: {
+              requestId,
+              userId: user.id,
+              username: user.username,
+              error: (error as Error).message,
+              stack: (error as Error).stack,
+              ip,
+            },
+          }
+        )
+      );
     }
   }
 
-  async deleteAccount(req: Request, res: Response) {
+  async deleteAccount(req: Request, res: Response, next: NextFunction) {
     const { requestId, ip } = req;
 
     if (!req.isAuthenticated()) {
@@ -139,21 +141,22 @@ class AccountController {
 
       res.redirect("/auth/login");
     } catch (err) {
-      LOGGER.error("Account deletion error", {
-        requestId,
-        userId: user.id,
-        username: user.username,
-        error: (err as Error).message,
-        stack: (err as Error).stack,
-        ip,
-      });
-
-      res.render("error", {
-        title: "Account Deletion Error",
-        message: (err as Error).message,
-        user: req.user,
-        isAuthenticated: req.isAuthenticated(),
-      });
+      next(
+        new AppError(
+          "Account Deletion Error",
+          "An error occurred while deleting your account",
+          {
+            logContext: {
+              requestId,
+              userId: user.id,
+              username: user.username,
+              error: (err as Error).message,
+              stack: (err as Error).stack,
+              ip,
+            },
+          }
+        )
+      );
     }
   }
 }

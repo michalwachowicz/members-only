@@ -1,11 +1,11 @@
-enum LogLevel {
+export enum LogLevel {
   Info = "info",
   Warn = "warn",
   Error = "error",
   Debug = "debug",
 }
 
-interface LogContext {
+export interface LogContext {
   userId?: number;
   requestId?: string;
   ip?: string;
@@ -41,7 +41,7 @@ function formatLogEntry(
   return JSON.stringify(logEntry);
 }
 
-function log(level: LogLevel, message: string, context?: LogContext) {
+export function log(level: LogLevel, message: string, context?: LogContext) {
   const formattedLog = formatLogEntry(level, message, context);
 
   switch (level) {
