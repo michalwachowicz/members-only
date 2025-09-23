@@ -1,5 +1,6 @@
 import { Pool } from "pg";
+import { config } from "../config";
 
 export default new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: config.dbUrl,
 });

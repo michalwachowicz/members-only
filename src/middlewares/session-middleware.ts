@@ -1,11 +1,12 @@
 import { Express } from "express";
+import { config } from "../config";
 import pool from "../db/pool";
 import session from "express-session";
 import pgSession from "connect-pg-simple";
 
 const sessionMiddleware = session({
   store: new (pgSession(session))({ pool, tableName: "session" }),
-  secret: process.env.SESSION_SECRET || "secret",
+  secret: config.sessionSecret,
   name: "session",
   resave: false,
   saveUninitialized: false,

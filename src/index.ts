@@ -1,4 +1,3 @@
-import "dotenv/config";
 import path from "path";
 import express from "express";
 import { LOGGER } from "./utils/logger";
@@ -8,9 +7,10 @@ import {
   initializeErrorMiddleware,
 } from "./middlewares";
 import { initializeRoutes } from "./routes";
+import { config } from "./config";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = config.port;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
