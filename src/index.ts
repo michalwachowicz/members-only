@@ -26,8 +26,8 @@ initializeMiddlewares(app);
 initializeRoutes(app);
 initializeErrorMiddleware(app);
 
-app.listen(PORT, async () => {
-  LOGGER.info(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", async () => {
+  LOGGER.info(`Server is running on http://0.0.0.0:${PORT}`);
   await initRedis();
   await initDatabase();
 });
