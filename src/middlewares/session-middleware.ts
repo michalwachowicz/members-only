@@ -4,6 +4,8 @@ import pool from "../db/pool";
 import session from "express-session";
 import pgSession from "connect-pg-simple";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const sessionMiddleware = session({
   store: new (pgSession(session))({ pool, tableName: "session" }),
   secret: config.sessionSecret,
@@ -11,7 +13,9 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
+    httpOnly: true,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day
   },
 });
