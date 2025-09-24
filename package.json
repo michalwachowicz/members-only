@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production node dist/index.js",
     "dev": "NODE_ENV=development ts-node-dev src/index.ts",
-    "build": "tsc"
+    "build": "tsc && cp -r src/views dist/"
   },
   "keywords": [
     "express",
