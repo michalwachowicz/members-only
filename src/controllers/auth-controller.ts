@@ -1,17 +1,11 @@
-import passport from "passport";
 import { NextFunction, Request, Response } from "express";
-import { ZodError } from "zod";
 import { AuthService, UserService } from "../services";
-import {
-  LoginSchema,
-  RegisterInput,
-  RegisterSchema,
-} from "../validations/auth-validation";
-import { formatZodErrors } from "../utils/zod-formatter";
+import { RegisterInput } from "../validations/auth-validation";
 import { SafeUser } from "../types/user";
 import { LOGGER } from "../utils/logger";
 import { AppError } from "../error/AppError";
 import render from "../utils/renderer";
+import { completeLogin } from "../utils/passport";
 
 class AuthController {
   async register(req: Request, res: Response) {
@@ -90,7 +84,7 @@ class AuthController {
     }
   }
 
-  async login(req: Request, res: Response, next: NextFunction) {
+  async login(req: Request, res: Response) {
     const { username } = req.body;
     const { ip, requestId } = req;
 
@@ -101,72 +95,58 @@ class AuthController {
         ip,
       });
 
-      passport.authenticate("local", (err: any, user: any, info: any) => {
-        if (err) {
-          LOGGER.error("Login error", {
-            requestId,
-            username,
-            error: err.message,
-            stack: err.stack,
-            ip,
-          });
-
-          return render("login", res, undefined, {
-            errors: ["An error occurred during login. Please try again."],
-            formData: req.body,
-          });
-        }
-        if (!user) {
-          LOGGER.warn("Failed login attempt", {
-            requestId,
-            username,
-            reason: info?.message || "Invalid username or password",
-            ip,
-          });
-
-          return render("login", res, undefined, {
-            errors: [info?.message || "Invalid username or password."],
-            formData: req.body,
-          });
-        }
-        req.logIn(user, (err) => {
-          if (err) {
-            LOGGER.error("Session creation error", {
-              requestId,
-              username,
-              userId: user.id,
-              error: err.message,
-              ip,
-            });
-
-            return render("login", res, undefined, {
-              errors: ["An error occurred during login. Please try again."],
-              formData: req.body,
-            });
-          }
-
-          LOGGER.info("User logged in successfully", {
-            requestId,
-            userId: user.id,
-            username,
-            isMember: user.isMember,
-            isAdmin: user.isAdmin,
-            ip,
-          });
-
-          return res.redirect("/");
+      if (req.validationErrors && req.validationErrors.length > 0) {
+        LOGGER.warn("Login validation error", {
+          requestId,
+          username,
+          errors: req.validationErrors,
+          ip,
         });
-      })(req, res, next);
-    } catch (error) {
-      LOGGER.warn("Login validation error", {
+
+        return render("login", res, undefined, {
+          errors: req.validationErrors,
+          formData: req.body,
+        });
+      }
+
+      const result = await completeLogin(req, res);
+
+      if (!result.success) {
+        LOGGER.warn("Failed login attempt", {
+          requestId,
+          username,
+          reason: result.error,
+          ip,
+        });
+
+        return render("login", res, undefined, {
+          errors: [result.error || "Invalid username or password."],
+          formData: req.body,
+        });
+      }
+
+      const user = result.user as SafeUser;
+      LOGGER.info("User logged in successfully", {
         requestId,
+        userId: user.id,
         username,
-        errors: req.validationErrors || formatZodErrors(error as ZodError),
+        isMember: user.isMember,
+        isAdmin: user.isAdmin,
         ip,
       });
 
-      render("login", res, undefined, {
-        errors: req.validationErrors || formatZodErrors(error as ZodError),
+      return res.redirect("/");
+    } catch (error) {
+      LOGGER.error("Login error", {
+        requestId,
+        username,
+        error: (error as Error).message,
+        stack: (error as Error).stack,
+        ip,
+      });
+
+      return render("login", res, undefined, {
+        errors: ["An error occurred during login. Please try again."],
         formData: req.body,
       });
     }
