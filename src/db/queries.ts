@@ -90,6 +90,36 @@ async function createMessageTable(): Promise<void> {
   await createTableIfNotExists("messages", query);
 }
 
+async function createIndexes(): Promise<void> {
+  try {
+    await pool.query(
+      `CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages (user_id)`
+    );
+
+    await pool.query(
+      `CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages (created_at DESC)`
+    );
+
+    await pool.query(
+      `CREATE INDEX IF NOT EXISTS idx_messages_user_created_at ON messages (user_id, created_at DESC)`
+    );
+
+    LOGGER.debug("Indexes ensured", {
+      indexes: [
+        "idx_messages_user_id",
+        "idx_messages_created_at",
+        "idx_messages_user_created_at",
+      ],
+    });
+  } catch (error) {
+    LOGGER.error("Failed to create indexes", {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+    });
+    throw error;
+  }
+}
+
 export async function initDatabase(): Promise<void> {
   const start = Date.now();
 
@@ -99,6 +129,7 @@ export async function initDatabase(): Promise<void> {
     await createUserTable();
     await createMessageTable();
     await createSessionTable();
+    await createIndexes();
 
     const duration = Date.now() - start;
     LOGGER.info("Database initialized successfully!", {
