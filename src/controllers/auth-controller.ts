@@ -3,7 +3,7 @@ import { AuthService, UserService } from "../services";
 import { RegisterInput } from "../validations/auth-validation";
 import { SafeUser } from "../types/user";
 import { LOGGER } from "../utils/logger";
-import { AppError } from "../error/AppError";
+import { errorFor } from "../error/http-errors";
 import render from "../utils/renderer";
 import { completeLogin } from "../utils/passport";
 
@@ -235,14 +235,10 @@ class AuthController {
     req.logout((err) => {
       if (err) {
         next(
-          new AppError("Logout Error", (err as Error).message, {
-            logContext: {
-              requestId,
-              userId: user?.id,
-              username: user?.username,
-              error: err.message,
-              ip,
-            },
+          errorFor(req).internalError({
+            logTitle: "Logout Error",
+            message: "Logout failed",
+            context: { error: err.message },
           })
         );
       }

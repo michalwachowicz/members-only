@@ -1,5 +1,5 @@
 import { Express } from "express";
-import { AppError } from "../error/AppError";
+import { notFound } from "../error/http-errors";
 import authRouter from "./auth-router";
 import accountRouter from "./account-router";
 import messageRouter from "./message-router";
@@ -14,18 +14,5 @@ export const initializeRoutes = (app: Express) => {
   app.use("/settings", settingsRouter);
   app.use("/users", userRouter);
   app.use("/", rootRouter);
-
-  app.use((req, _, next) => {
-    next(
-      new AppError("Not Found", "Not found", {
-        logTitle: "Not Found",
-        logContext: {
-          requestId: req.requestId,
-          method: req.method,
-          url: req.url,
-          ip: req.ip,
-        },
-      })
-    );
-  });
+  app.use((req, _, next) => next(notFound("Not found", req)));
 };

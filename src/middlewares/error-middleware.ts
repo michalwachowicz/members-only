@@ -1,7 +1,7 @@
 import { Express, Request, Response, NextFunction } from "express";
 import { log, LOGGER, LogLevel } from "../utils/logger";
 import { SafeUser } from "../types/user";
-import { AppError } from "../error/AppError";
+import { AppError } from "../error/app-error";
 import render from "../utils/renderer";
 
 export default function initializeErrorMiddleware(app: Express) {

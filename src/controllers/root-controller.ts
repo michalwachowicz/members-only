@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import { SafeUser } from "../types/user";
 import { LOGGER } from "../utils/logger";
 import MessageService from "../services/message-service";
-import { AppError } from "../error/AppError";
+import { AppError } from "../error/app-error";
+import { errorFor } from "../error/http-errors";
 import { LogLevel } from "../utils/logger";
 import render from "../utils/renderer";
 
@@ -44,17 +45,13 @@ class RootController {
         throw error;
       }
 
-      throw new AppError("Database Error", "Failed to load home page", {
+      throw errorFor(req).internalError({
         logTitle: "Home page load failed",
         logLevel: LogLevel.Error,
-        statusCode: 500,
-        logContext: {
-          requestId,
-          userId: (req.user as SafeUser)?.id,
-          username: (req.user as SafeUser)?.username,
+        message: "Failed to load home page",
+        context: {
           error: (error as Error).message,
           stack: (error as Error).stack,
-          ip,
         },
       });
     }

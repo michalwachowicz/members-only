@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { MessageService, UserService } from "../services";
 import { SafeUser, User } from "../types/user";
 import { LOGGER } from "../utils/logger";
-import { AppError } from "../error/AppError";
+import { errorFor } from "../error/http-errors";
 
 class AccountController {
   async getAccount(req: Request, res: Response) {
@@ -58,21 +58,14 @@ class AccountController {
       res.redirect("/account");
     } catch (error) {
       next(
-        new AppError(
-          "Account Update Error",
-          "An error occurred while updating your account",
-          {
-            statusCode: 500,
-            logContext: {
-              requestId,
-              userId: user.id,
-              username: user.username,
-              error: (error as Error).message,
-              stack: (error as Error).stack,
-              ip,
-            },
-          }
-        )
+        errorFor(req).internalError({
+          logTitle: "Account Update Error",
+          message: "An error occurred while updating your account",
+          context: {
+            error: (error as Error).message,
+            stack: (error as Error).stack,
+          },
+        })
       );
     }
   }
@@ -123,21 +116,14 @@ class AccountController {
       res.redirect("/auth/login");
     } catch (err) {
       next(
-        new AppError(
-          "Account Deletion Error",
-          "An error occurred while deleting your account",
-          {
-            statusCode: 500,
-            logContext: {
-              requestId,
-              userId: user.id,
-              username: user.username,
-              error: (err as Error).message,
-              stack: (err as Error).stack,
-              ip,
-            },
-          }
-        )
+        errorFor(req).internalError({
+          logTitle: "Account Deletion Error",
+          message: "An error occurred while deleting your account",
+          context: {
+            error: (err as Error).message,
+            stack: (err as Error).stack,
+          },
+        })
       );
     }
   }

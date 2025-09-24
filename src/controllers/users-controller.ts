@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import type { SafeUser } from "../types/user";
 import { MessageService, UserService } from "../services";
-import { LogLevel } from "../utils/logger";
-import { AppError } from "../error/AppError";
+import { badRequest, notFound } from "../error/http-errors";
 import render from "../utils/renderer";
 
 class UserController {
@@ -10,18 +9,7 @@ class UserController {
     const authUser = req.user as SafeUser;
 
     const id = req.params.id;
-    if (!id || isNaN(Number(id))) {
-      throw new AppError("Invalid User ID", "Invalid user ID", {
-        logTitle: "Invalid User ID",
-        logLevel: LogLevel.Error,
-        logContext: {
-          requestId: req.requestId,
-          userId: authUser.id,
-          username: authUser.username,
-          ip: req.ip,
-        },
-      });
-    }
+    if (!id || isNaN(Number(id))) throw badRequest("Invalid user ID", req);
 
     if (id === (req.user as SafeUser).id.toString()) {
       res.redirect("/account");
@@ -30,15 +18,8 @@ class UserController {
 
     const user = await UserService.getSafeUserById(Number(id));
     if (!user) {
-      throw new AppError("User Not Found", "User not found", {
-        logTitle: "User Not Found",
-        logLevel: LogLevel.Error,
-        logContext: {
-          requestId: req.requestId,
-          userId: authUser.id,
-          username: authUser.username,
-          ip: req.ip,
-        },
+      throw notFound("User not found", req, {
+        requestedUserId: id,
       });
     }
 

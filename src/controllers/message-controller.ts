@@ -5,7 +5,8 @@ import type { SafeUser } from "../types/user";
 import { MessageSchema } from "../validations/message-validation";
 import { formatZodErrors } from "../utils/zod-formatter";
 import { LOGGER, LogLevel } from "../utils/logger";
-import { AppError } from "../error/AppError";
+import { AppError } from "../error/app-error";
+import { notFound, forbidden, errorFor } from "../error/http-errors";
 import render from "../utils/renderer";
 
 class MessageController {
@@ -96,37 +97,23 @@ class MessageController {
       const message = await MessageService.getMessageById(messageId);
 
       if (!message) {
-        throw new AppError("Not Found", "Message not found", {
-          logTitle: "Message not found for deletion",
-          logLevel: LogLevel.Warn,
-          statusCode: 404,
-          logContext: {
-            requestId,
-            userId: user.id,
-            username: user.username,
-            messageId,
-            ip,
-          },
+        throw notFound("Message not found", req, {
+          messageId,
         });
       }
 
       if (user.id !== message.userId && !user.isAdmin) {
-        throw new AppError(
-          "Forbidden",
+        throw forbidden(
           "You are not allowed to delete this message",
+          req,
+          {
+            messageId,
+            messageAuthorId: message.userId,
+            isAdmin: user.isAdmin,
+          },
           {
             logTitle: "Unauthorized delete attempt",
             logLevel: LogLevel.Warn,
-            statusCode: 403,
-            logContext: {
-              requestId,
-              userId: user.id,
-              username: user.username,
-              messageId,
-              messageAuthorId: message.userId,
-              isAdmin: user.isAdmin,
-              ip,
-            },
           }
         );
       }
@@ -139,18 +126,14 @@ class MessageController {
         next(error);
       } else {
         next(
-          new AppError("Error", "An error occurred while loading the message", {
+          errorFor(req).internalError({
             logTitle: "Delete Confirmation Error",
             logLevel: LogLevel.Error,
-            statusCode: 500,
-            logContext: {
-              requestId,
-              userId: user.id,
-              username: user.username,
+            message: "An error occurred while loading the message",
+            context: {
               messageId,
               error: (error as Error).message,
               stack: (error as Error).stack,
-              ip,
             },
           })
         );
@@ -172,43 +155,28 @@ class MessageController {
     });
 
     try {
+      const err = errorFor(req);
       const message = await MessageService.getMessageById(messageId);
 
-      if (!message) {
-        throw new AppError("Not Found", "Message not found", {
+      if (!message)
+        throw err.notFound({
           logTitle: "Message not found for deletion",
           logLevel: LogLevel.Warn,
-          statusCode: 404,
-          logContext: {
-            requestId,
-            userId: user.id,
-            username: user.username,
+          message: "Message not found",
+          context: { messageId },
+        });
+
+      if (user.id !== message.userId && !user.isAdmin)
+        throw err.forbidden({
+          logTitle: "Unauthorized delete attempt",
+          logLevel: LogLevel.Warn,
+          message: "You are not allowed to delete this message",
+          context: {
             messageId,
-            ip,
+            messageAuthorId: message.userId,
+            isAdmin: user.isAdmin,
           },
         });
-      }
-
-      if (user.id !== message.userId && !user.isAdmin) {
-        throw new AppError(
-          "Forbidden",
-          "You are not allowed to delete this message",
-          {
-            logTitle: "Unauthorized delete attempt",
-            logLevel: LogLevel.Warn,
-            statusCode: 403,
-            logContext: {
-              requestId,
-              userId: user.id,
-              username: user.username,
-              messageId,
-              messageAuthorId: message.userId,
-              isAdmin: user.isAdmin,
-              ip,
-            },
-          }
-        );
-      }
 
       await MessageService.deleteMessage(messageId);
 
@@ -229,24 +197,16 @@ class MessageController {
         next(error);
       } else {
         next(
-          new AppError(
-            "Error",
-            "An error occurred while deleting the message",
-            {
-              logTitle: "Message Deletion Error",
-              logLevel: LogLevel.Error,
-              statusCode: 500,
-              logContext: {
-                requestId,
-                userId: user.id,
-                username: user.username,
-                messageId,
-                error: (error as Error).message,
-                stack: (error as Error).stack,
-                ip,
-              },
-            }
-          )
+          errorFor(req).internalError({
+            logTitle: "Message Deletion Error",
+            logLevel: LogLevel.Error,
+            message: "An error occurred while deleting the message",
+            context: {
+              messageId,
+              error: (error as Error).message,
+              stack: (error as Error).stack,
+            },
+          })
         );
       }
     }
