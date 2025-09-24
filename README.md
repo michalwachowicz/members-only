@@ -4,7 +4,7 @@ A private clubhouse app where members can post messages. Features role-based acc
 
 This project was built as part of The Odin Project assignment: [Project: Members Only](https://www.theodinproject.com/lessons/node-path-nodejs-members-only).
 
-[Visit the Preview](https://members-only-a007.onrender.com/auth/register)
+[Visit the Preview](https://members-only-production-e17b.up.railway.app/)
 
 ## 🧩 Tech Stack
 
