@@ -23,27 +23,33 @@ export function checkAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 export function checkMember(req: Request, res: Response, next: NextFunction) {
-  const isAuthenticated = req.isAuthenticated();
-  const user = req.user as SafeUser | undefined;
-  const isMember = Boolean(user?.isMember);
+  checkAuth(req, res, (err) => {
+    if (err) return next(err);
 
-  if (!isAuthenticated || !isMember) {
-    LOGGER.info(
-      "Non-member or unauthenticated - redirecting to /auth/upgrade",
-      {
+    const user = req.user as SafeUser | undefined;
+    const isMember = Boolean(user?.isMember);
+
+    if (!isMember) {
+      LOGGER.info("Non-member access - redirecting to /auth/upgrade", {
         requestId: req.requestId,
         method: req.method,
         url: req.originalUrl || req.url,
         ip: req.ip,
         userId: user?.id,
-        isAuthenticated,
         isMember,
         statusCode: 302,
-      }
-    );
+      });
 
-    return res.redirect("/auth/upgrade");
+      return res.redirect("/auth/upgrade");
+    }
+
+    next();
+  });
+}
+
+export function checkGuest(req: Request, res: Response, next: NextFunction) {
+  if (req.isAuthenticated()) {
+    return res.redirect("/");
   }
-
   next();
 }

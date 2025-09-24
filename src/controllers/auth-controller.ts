@@ -153,12 +153,10 @@ class AuthController {
   }
 
   async getLogin(req: Request, res: Response) {
-    if (req.isAuthenticated()) return res.redirect("/");
     render("login", res);
   }
 
   async getRegister(req: Request, res: Response) {
-    if (req.isAuthenticated()) return res.redirect("/");
     render("register", res);
   }
 
